@@ -9,7 +9,7 @@ public class AppTest
 {
     @Test
     public void testingProjectSetup(){
-        App newApp = new App();
+        domainTest newApp = new domainTest();
 
         assertEquals("hello", newApp.printInput("hello"));
     }
