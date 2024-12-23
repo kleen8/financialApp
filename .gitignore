@@ -13,5 +13,8 @@ target/
 .project
 .settings/
 
+#vscode specific files
+.vscode
+
 # Maven Wrapper
 .mvn/wrapper/maven-wrapper.jar
