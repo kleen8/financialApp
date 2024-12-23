@@ -1,0 +1,10 @@
+# Maven target directory
+target/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Compiled Java classes
+*.class
+
