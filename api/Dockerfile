@@ -18,7 +18,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the built .jar file from the backend-builder stage
-COPY --from=backend-builder /app/api/target/api-1.0-SNAPSHOT.jar /app/backend.jar
+COPY --from=backend-builder /app/persistence/target/persistence-1.0-SNAPSHOT.jar /app/backend.jar
 
 EXPOSE 8080
 
