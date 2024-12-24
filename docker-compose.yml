@@ -1,4 +1,3 @@
-version: '3'
 services:
   backend:
     build:
@@ -14,7 +13,7 @@ services:
       context: .
       dockerfile: client/Dockerfile
     ports:
-      - "5137:5137"     
+      - "5137:5137" # Exposes the frontend on 5137 
     networks:
       - app-network
     environment:
@@ -22,6 +21,21 @@ services:
     depends_on:
       - backend
 
+  database:
+    image: postgres:15
+    ports:
+      - "5432:5432" # Exposes database on port 5432
+    networks:
+      - app-network
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: financialapp
+    volumes:
+      - db-data:/var/lib/postgresql/data # Persist the database data
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  db-data:
