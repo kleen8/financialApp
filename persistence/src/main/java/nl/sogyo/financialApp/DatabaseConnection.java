@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     public static Connection getConnection() throws SQLException {
-        String url = "jdbc:postgresql://database:5432/financialapp"; // Database URL
+        String url = "jdbc:postgresql://localhost:5432/financialapp"; // Database URL
         String username = "admin"; // Your PostgreSQL username
         String password = "admin"; // Your PostgreSQL password
 
