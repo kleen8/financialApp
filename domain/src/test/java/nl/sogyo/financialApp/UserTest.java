@@ -2,6 +2,7 @@ package nl.sogyo.financialApp;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 /**
@@ -13,8 +14,8 @@ public class UserTest {
     
     @BeforeEach
     public void setUp(){
-        user = new User("Jelle", "Jacobs", "jelle.jacobs99@gmail.com", "Derkinderenstraat",
-                "1061 vx", "196");
+        user = User.createUser("Jelle", "Jacobs", "jelle.jacobs99@gmail.com", "Derkinderenstraat",
+                "1061 vx", "196", "Amsterdam", "Netherlands");
         System.out.println("creation of user complete");
     }
 
@@ -24,6 +25,38 @@ public class UserTest {
         assertEquals("Jelle", user.getUserName());
     }
 
+    @Test
+    public void testIsStringEmpty(){
+        assertEquals(true, user.isStringEmpty(" "));
+    }
 
+    @Test
+    public void testWrongInput(){
+        user = User.createUser("", "Jacobs", "jelle.jacobs99@gmail.com", "Derkinderenstraat",
+                "1061 vx", "196", "Amsterdam", "Netherlands");
+        assertNull(user);
+    }
+
+    @Test
+    public void testWrongEmail(){
+        user = User.createUser("Jelle", "Jacobs", "jelle.jacobs99", "Derkinderenstraat",
+                "1061 vx", "196", "Amsterdam", "Netherlands");
+        assertNull(user);
+    }
+
+
+    @Test
+    public void testWrongEmailDot(){
+        user = User.createUser("Jelle", "Jacobs", "jelle.jacobs99@gmail", "Derkinderenstraat",
+                "1061 vx", "196", "Amsterdam", "Netherlands");
+        assertNull(user);
+    }
+
+    @Test
+    public void testWrongZipCode(){
+        user = User.createUser("Jelle", "Jacobs", "jelle.jacobs99@gmail", "Derkinderenstraat",
+                "1061", "196", "Amsterdam", "Netherlands");
+        assertNull(user);
+    }
 
 } 
