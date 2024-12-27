@@ -14,9 +14,9 @@ public class UserTest {
     
     @BeforeEach
     public void setUp(){
+        System.out.println("Setting up user");
         user = User.createUser("Jelle", "Jacobs", "jelle.jacobs99@gmail.com", "Derkinderenstraat",
                 "1061 vx", "196", "Amsterdam", "Netherlands");
-        System.out.println("creation of user complete");
     }
 
     @Test
@@ -57,6 +57,12 @@ public class UserTest {
         user = User.createUser("Jelle", "Jacobs", "jelle.jacobs99@gmail", "Derkinderenstraat",
                 "1061", "196", "Amsterdam", "Netherlands");
         assertNull(user);
+    }
+
+    @Test
+    public void testChangeFirstName(){
+        user.changeFirstName("Hennie");
+        assertEquals("Hennie", user.firstName);
     }
 
 } 

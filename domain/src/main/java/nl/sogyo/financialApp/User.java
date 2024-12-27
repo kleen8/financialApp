@@ -36,7 +36,7 @@ public class User {
         if (!isValidName(firstName) || !isValidName(lastName) || !isValidEmail(email) ||
             !isValidAddressField(streetName) || !isValidZipCode(zipCode) || 
             !isValidHouseNumber(houseNumber) || !isValidCity(city) || !isValidCountry(country)) {
-            System.out.println("Invalid input data; user not created.");
+            //System.out.println("Invalid input data; user not created.");
             return null;  // Return null to indicate failure
         }
 
@@ -86,4 +86,7 @@ public class User {
         return country != null && !country.isBlank();
     }
 
+    protected void changeFirstName(String newName){
+        this.firstName = newName;
+    }
 }
