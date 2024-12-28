@@ -12,7 +12,7 @@ target/
 .classpath
 .project
 .settings/
-
+.metadata
 #vscode specific files
 .vscode
 
