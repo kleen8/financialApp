@@ -1,5 +1,6 @@
 <script>
     import { push } from "svelte-spa-router";
+    import Counter from "../lib/Counter.svelte";
     
     
     let password = '';
@@ -17,13 +18,42 @@
     let isEmailValid = true;
     let isPasswordValid = true;
 
-    function handleAccountCreation(){
+    async function  handleAccountCreation(){
         if (isFormValid()){
-            push('/');
+            console.log("Form is valid");
+            const user = userToJson();
+            const response = await fetch("/api/createUser", {
+                method : "POST",
+                headers : {
+                    "Content-Type" : "application/json",
+                },
+                body: JSON.stringify(user),
+            });
+            if(!response.ok) {
+                console.error("Account is not created", response.statusText);
+                return;
+            } else {
+                console.log("account is created")
+            }
         } else {
             alert("Correct the login form");
         }
     }
+    
+    function userToJson(){
+        let user = {
+            "firstName" : name,
+            "familyName" : familyName,
+            "streetName" : streetName,
+            "houseNumber" : houseNumber,
+            "city" : city,
+            "zipCode" : zipcode,
+            "emailUser" : email_user,
+            "country" : country
+        }
+        return user;
+    }
+
 
     function togglePasswordRequirements() {
         showRequirements = true;
