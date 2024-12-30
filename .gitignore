@@ -1,6 +1,6 @@
 # Maven target directory
 target/
-
+financialApp/
 # Logs and temporary files
 *.log
 *.tmp
