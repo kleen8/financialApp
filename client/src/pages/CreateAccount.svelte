@@ -1,7 +1,7 @@
 <script>
     import { push } from "svelte-spa-router";
     
-    const apiBaseUrl = import.meta.env.VITE_API_URL 
+    let apiBaseUrl = import.meta.env.VITE_API_URL 
     let password = '';
     let name = '';
     let familyName = '';
@@ -19,10 +19,11 @@
 
     async function  handleAccountCreation(){
         await callHello();
+        console.log(apiBaseUrl);
         if (isFormValid()){
             console.log("Form is valid");
             const user = userToJson();
-            const response = await fetch(apiBaseUrl+"/createUser", {
+            const response = await fetch("/api/createUser", {
                 method : "POST",
                 headers : {
                     "Content-Type" : "application/json",
@@ -42,10 +43,10 @@
     
 
     async function callHello(){
-        const url = apiBaseUrl + "/hello";
+        const url = "api/hello";
         console.log(url);
-        const response = await fetch(url);
-        const text = await response.text;
+        let response = await fetch(url);
+        let text = await response.text();
         console.log(text);
     }
 
