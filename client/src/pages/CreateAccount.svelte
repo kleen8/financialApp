@@ -15,7 +15,7 @@
     let showRequirements = false;
     let showPassword = false;
     let isEmailValid = true;
-    let isPasswordValid = true;
+    let isPasswordValid = true
 
     async function  handleAccountCreation(){
         await callHello();
