@@ -22,7 +22,7 @@ public class UserTest {
     @Test
     public void testingProjectSetup(){
         System.out.println("testingProjectSetup");
-        assertEquals("le", user.getUserName());
+        assertEquals("Jelle", user.getUserName());
     }
 
 
