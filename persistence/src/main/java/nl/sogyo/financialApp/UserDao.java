@@ -1,32 +1,48 @@
 package nl.sogyo.financialApp;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
-public class UserDao {
+public class UserDao implements IUserDAO{
 
-    public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users"; // The SQL query to fetch all users
+    private final String saveUserQuery = "INSERT INTO users (name, email) VALUES (?, ?)";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String email = resultSet.getString("email");
-
-                User user = new User(id, name, email);
-                users.add(user);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching users: " + e.getMessage());
+	@Override
+	public void save(User user) {
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(saveUserQuery);
+            stmt.setString(1, user.getFirstName());
+            stmt.setString(2, user.getEmail());
+            stmt.executeUpdate();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+	}
 
-        return users;
-    }
+	@Override
+	public User findById(int id) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'findById'");
+	}
+
+	@Override
+	public List<User> findAll() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+	}
+
+	@Override
+	public void update(User user) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'update'");
+	}
+
+	@Override
+	public void delete(int id) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'delete'");
+	}
 }
 

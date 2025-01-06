@@ -43,8 +43,12 @@ public class User {
         return new User(firstName, lastName, email, streetName, zipCode, houseNumber, city, country);
     }
 
-    protected String getUserName(){
+    protected String getFirstName(){
         return firstName;
+    }
+    
+    protected String getEmail(){
+        return email;
     }
 
     protected Boolean isStringEmpty(String input){
