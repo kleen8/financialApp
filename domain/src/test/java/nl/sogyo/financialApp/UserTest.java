@@ -22,8 +22,9 @@ public class UserTest {
     @Test
     public void testingProjectSetup(){
         System.out.println("testingProjectSetup");
-        assertEquals("Jelle", user.getUserName());
+        assertEquals("le", user.getUserName());
     }
+
 
     @Test
     public void testIsStringEmpty(){

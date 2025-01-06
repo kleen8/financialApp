@@ -30,8 +30,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       
+      - name: Run domain tests
+        run: mvn test -pl domain
+
       - name: Build and run test for maven the domain module
         run: mvn clean install -pl domain -am -DskipTests=false
 
-      - name: Run domain tests
-        run: mvn test -pl domain
