@@ -1,6 +1,8 @@
 package nl.sogyo.financialApp.controller;
 
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +21,7 @@ public class FinancialAppController{
     }
 
     @PostMapping("/createUser")
-    public String createUser(@RequestBody String jsonString){
+    public ResponseEntity<String> createUser(@RequestBody String jsonString){
         System.out.println(jsonString);
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -35,10 +37,10 @@ public class FinancialAppController{
             city, country);
             UserDao database = new UserDao();
             database.save(newUser); 
-            return "succes";
+            return ResponseEntity.ok("succes");
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("user not created");
         }
     }
 }
