@@ -1,6 +1,5 @@
 # Maven target directory
 target/
-financialApp/
 # Logs and temporary files
 *.log
 *.tmp
@@ -13,6 +12,7 @@ financialApp/
 .project
 .settings/
 .metadata
+financialApp/.metadata
 #vscode specific files
 .vscode
 
