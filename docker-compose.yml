@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
+    env_file:
+      - database.env
     ports:
       - "8080:8080"  # Exposes Spring Boot app on port 8080
     networks:
@@ -27,10 +29,8 @@ services:
       - "5432:5432" # Exposes database on port 5432
     networks:
       - app-network
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: financialapp
+    env_file:
+      - database.env
     volumes:
       - db-data:/var/lib/postgresql/data # Persist the database data
 networks:
