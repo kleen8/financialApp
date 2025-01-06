@@ -18,3 +18,4 @@ financialApp/
 
 # Maven Wrapper
 .mvn/wrapper/maven-wrapper.jar
+**.env

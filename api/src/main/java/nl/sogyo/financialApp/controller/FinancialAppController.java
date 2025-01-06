@@ -6,16 +6,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.sql.Connection;
 import nl.sogyo.financialApp.*;
-
 
 @CrossOrigin(origins = "*" )
 @RestController
 @RequestMapping("/api")
 public class FinancialAppController{
     
-    User jelle = User.createUser();
 
 
     @GetMapping("/hello")
@@ -26,6 +24,10 @@ public class FinancialAppController{
     @PostMapping("/createUser")
     public String createUser(@RequestBody String jsonString){
         System.out.println(jsonString);
-        return "Account Created";
+        Connection connection = DatabaseConnection.getConnection();  
+        if (connection != null) {
+            return "Account Created";
+        }
+        return "error";
     }
 }
