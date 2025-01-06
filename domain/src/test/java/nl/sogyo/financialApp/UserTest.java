@@ -25,6 +25,7 @@ public class UserTest {
         assertEquals("Jelle", user.getUserName());
     }
 
+
     @Test
     public void testIsStringEmpty(){
         assertEquals(true, user.isStringEmpty(" "));
