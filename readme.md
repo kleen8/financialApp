@@ -5,10 +5,10 @@
 Upon cloning the project go to the root directory of the project (financialApp), create a .env file with the database credentials, see the setup for the env file below. Next up change the name of the env file in the docker compose file. and type "docker compose up --build". This command should build the project. 
 
 ### database.env ###
-DB_USER=fill-in
-DB_PASSWORD=fill-in
-DB_HOST=database
-DB_NAME=financial_app
+DB_USER=fill-in <br/>
+DB_PASSWORD=fill-in <br/>
+DB_HOST=database <br/>
+DB_NAME=financial_app <br/>
 
 ## Financial App ##
 
