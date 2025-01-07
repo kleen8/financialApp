@@ -1,7 +1,6 @@
 <script>
     import { push } from "svelte-spa-router";
     
-    let apiBaseUrl = import.meta.env.VITE_API_URL 
     let password = '';
     let name = '';
     let familyName = '';
@@ -19,7 +18,6 @@
 
     async function  handleAccountCreation(){
         await callHello();
-        console.log(apiBaseUrl);
         if (isFormValid()){
             console.log("Form is valid");
             const user = userToJson();
@@ -59,7 +57,8 @@
             "city" : city,
             "zipCode" : zipcode,
             "emailUser" : email_user,
-            "country" : country
+            "country" : country,
+            "password" : password
         }
         return user;
     }
@@ -117,9 +116,7 @@
 </script>
 
 <main>
-
     <h1>Welcome to account creation</h1>
-
     <form on:submit|preventDefault={handleAccountCreation} class="account-creation">
         <input type="email" 
         placeholder="Email" 
@@ -169,7 +166,6 @@
             disabled={!isFormValid()}
             >Create Account</button>
     </form>
-
 </main>
 
 

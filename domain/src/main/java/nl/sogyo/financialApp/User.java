@@ -51,6 +51,30 @@ public class User {
         return email;
     }
 
+    protected String getHouseNumber(){
+        return houseNumber;
+    }
+
+    protected String getCity(){
+        return city;
+    }
+
+    protected String getCountry(){
+        return country;
+    }
+
+    protected String getStreetName(){
+        return streetName;
+    }
+
+    protected String getZipCode(){
+        return zipCode;
+    }
+
+    protected String getLastName(){
+        return lastName;
+    }
+
     protected Boolean isStringEmpty(String input){
         return input == null || input.isBlank();
     }
@@ -58,7 +82,6 @@ public class User {
     private static boolean isValidName(String name){
         return name != null && !name.isBlank() && name.matches("[A-Za-z]+");
     }
-
 
     private static boolean isValidEmail(String email){
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"; 
@@ -69,13 +92,12 @@ public class User {
         return field != null && !field.isBlank();
     }
 
-
     private static boolean isValidZipCode(String zipCode){
         String zipCodeRegex = "^[0-9]{4}\\s?[A-Za-z]{2}$";  // Example: 1234 AB
         return zipCode != null && zipCode.matches(zipCodeRegex);
     }
 
-     // Validate house number (can be numeric or alphanumeric in some cases)
+    // Validate house number (can be numeric or alphanumeric in some cases)
     private static boolean isValidHouseNumber(String houseNumber) {
         return houseNumber != null && houseNumber.matches("[A-Za-z0-9]+");
     }

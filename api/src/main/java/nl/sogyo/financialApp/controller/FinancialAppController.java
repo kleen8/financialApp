@@ -33,14 +33,22 @@ public class FinancialAppController{
             String houseNumber = jsonObject.getString("houseNumber");
             String city = jsonObject.getString("city");
             String country = jsonObject.getString("country");
+            String password = jsonObject.getString("password");
             User newUser = User.createUser(firstName, lastName, email, streetName, zipCode, houseNumber,
             city, country);
             UserDao database = new UserDao();
-            database.save(newUser); 
-            return ResponseEntity.ok("succes");
+            if (database.doesUserExist(email)){
+                return null; 
+            } else {
+                database.save(newUser, password); 
+                return ResponseEntity.ok("succes");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.CONFLICT).body("user not created");
         }
     }
+
+
+
 }
