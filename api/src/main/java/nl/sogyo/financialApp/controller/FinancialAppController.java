@@ -2,6 +2,7 @@ package nl.sogyo.financialApp.controller;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,9 @@ import nl.sogyo.financialApp.*;
 @RestController
 @RequestMapping("/api")
 public class FinancialAppController{
+
+    @Autowired
+    private HttpSession session;
     
     @GetMapping("/hello")
     public String sayHello(){
@@ -70,4 +74,17 @@ public class FinancialAppController{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
     }
+
+    @GetMapping("/check-login")
+    public ResponseEntity<String> checkLogin() {
+        String userEmail = (String) session.getAttribute("userEmail");
+        if (userEmail != null){
+            return ResponseEntity.ok("User is logged in");
+        } else {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+    }
+
+
+
 }
