@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpSession;
 
 import nl.sogyo.financialApp.*;
 
@@ -53,13 +54,14 @@ public class FinancialAppController{
     }
 
     @PostMapping("/loginUser")
-    public ResponseEntity<String> loginUser(@RequestBody String jsonString){
+    public ResponseEntity<String> loginUser(@RequestBody String jsonString, HttpSession session){
         UserDao database = new UserDao();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             String email = jsonObject.optString("email", "").trim();
             String password = jsonObject.optString("password", "").trim();
             if (database.isLoginCorrect(email, password)){
+                    session.setAttribute("userEmail", email);
                     return ResponseEntity.ok("User excists");
                 }
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
