@@ -1,4 +1,5 @@
 <script>
+
     import { push } from "svelte-spa-router";
     
     let password = '';
@@ -17,35 +18,35 @@
     let isPasswordValid = true
 
     async function  handleAccountCreation(){
-        await callHello();
         if (isFormValid()){
             console.log("Form is valid");
             const user = userToJson();
-            const response = await fetch("/api/createUser", {
-                method : "POST",
-                headers : {
-                    "Content-Type" : "application/json",
-                },
-                body: JSON.stringify(user),
-            });
-            if(!response.ok) {
-                console.error("Account is not created", response.statusText);
-                return;
-            } else {
-                console.log("account is created")
+
+            try {
+
+                const response = await fetch("/api/createUser", {
+                    method : "POST",
+                    headers : {
+                        "Content-Type" : "application/json",
+                    },
+                    body: JSON.stringify(user),
+                });
+                
+                const message = await response.text();
+
+
+                if(!response.ok) {
+                    alert(message);
+                    return;
+                } 
+                console.log("account is created");
+                push("/");
+            } catch (error) {
+                console.error("Network or server error:", error);
             }
         } else {
             alert("Correct the login form");
         }
-    }
-    
-
-    async function callHello(){
-        const url = "api/hello";
-        console.log(url);
-        let response = await fetch(url);
-        let text = await response.text();
-        console.log(text);
     }
 
     function userToJson(){
@@ -162,7 +163,6 @@
         <input type="text" placeholder="House number" bind:value={houseNumber} required/>
         <input type="text" placeholder="Zipcode" bind:value={zipcode} required/>
         <button type="submit" 
-            on:click={handleAccountCreation}
             disabled={!isFormValid()}
             >Create Account</button>
     </form>

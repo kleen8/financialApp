@@ -5,10 +5,32 @@
   let username = '';
   let password = '';
 
-  function handleLogin(){
+  async function handleLogin(){
       if (username && password) {
-          console.log("Logging in: ", username);
-          push("/home");
+          let loginCredentials = {
+            "email" : username,
+            "password" : password
+          }
+          try {
+              const response = await fetch("/api/loginUser", {
+                  method : "POST",
+                  headers : {
+                      "Content-Type" : "application/json",
+                  },
+                  body: JSON.stringify(loginCredentials),
+              });
+              if(response.ok){
+                  console.log(await response.text());
+                  push("/home");
+              } else if (response.status === 401){
+                  alert("Invalid email or password");
+              } else {
+                  alert("An error occurred please try again");
+              }
+          } catch (error) {
+              console.error("Network error:", error);
+              alert("Unable to connect to the server");
+          }
       } else {
           alert("Please fill in both fields");
       }

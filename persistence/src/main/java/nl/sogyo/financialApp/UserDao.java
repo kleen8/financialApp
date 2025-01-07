@@ -74,11 +74,31 @@ public class UserDao implements IUserDAO{
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
             stmt.setString(1, email);
             try (ResultSet resultSet = stmt.executeQuery()){
-                return true;
+                    return resultSet.next();
                 }
             } catch (SQLException e) {
-                throw new UserNotFoundException("User with email " + email + " not found");
+                e.printStackTrace();
+                return false;
             }
+    }
+
+    public boolean isLoginCorrect(String email, String password){
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
+            stmt.setString(1, email);
+            try (ResultSet resultSet = stmt.executeQuery()){
+                if (resultSet.next()){
+                    String hashedPassword = resultSet.getString("password_hash");
+                    if (isPasswordCorrect(hashedPassword, password)){
+                        return true;
+                    }
+                }
+              }
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+            return false;
     }
 	
     @Override
