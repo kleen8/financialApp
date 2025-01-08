@@ -20,6 +20,10 @@ public class UserDao implements IUserDAO{
     SELECT * FROM users WHERE email = ?;
     """;
 
+    private final String findAllUsers = """
+    SELECT * FROM users;
+    """;
+
 	@Override
 	public void save(User user, String password) {
         String passwordHash = hashPassword(password);
@@ -42,16 +46,9 @@ public class UserDao implements IUserDAO{
         }
 	}
 
-	@Override
-	public User findById(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'findById'");
-	}
-   
-
-    // TODO: is this needed maybe we only need to know if the user already exists
     // because then the frontend needs to get notified
-    protected User findByEmail(String email){
+    @Override
+    public User findByEmail(String email){
         try {
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
@@ -104,7 +101,18 @@ public class UserDao implements IUserDAO{
     @Override
 	public List<User> findAll() {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
+            ResultSet resultSet = stmt.executeQuery();
+            while (resultSet.next()){
+                User user = mapToUser(resultSet);
+                users.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return users;
 	}
 
 	@Override
