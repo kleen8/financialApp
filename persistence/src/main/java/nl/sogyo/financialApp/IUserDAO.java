@@ -7,5 +7,5 @@ public interface IUserDAO {
     User findByEmail(String email);
     List<User> findAll();
     void update(User user);
-    void delete(int id);
+    void delete(String email);
 }

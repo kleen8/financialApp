@@ -1,6 +1,7 @@
 package nl.sogyo.financialApp;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.password4j.Hash;
@@ -22,6 +23,10 @@ public class UserDao implements IUserDAO{
 
     private final String findAllUsers = """
     SELECT * FROM users;
+    """;
+    
+    private final String deleteUser = """
+    DELETE FROM users WHERE email = ?;
     """;
 
 	@Override
@@ -100,10 +105,9 @@ public class UserDao implements IUserDAO{
 	
     @Override
 	public List<User> findAll() {
-		// TODO Auto-generated method stub
         List<User> users = new ArrayList<>();
         try (Connection connection = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
+            PreparedStatement stmt = connection.prepareStatement(findAllUsers);
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
                 User user = mapToUser(resultSet);
@@ -122,9 +126,14 @@ public class UserDao implements IUserDAO{
 	}
 
 	@Override
-	public void delete(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'delete'");
+	public void delete(String email) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(deleteUser);
+            stmt.setString(1, email);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 
     protected String hashPassword(String password){
