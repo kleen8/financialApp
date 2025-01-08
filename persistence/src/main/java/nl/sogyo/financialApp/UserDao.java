@@ -2,10 +2,13 @@ package nl.sogyo.financialApp;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.password4j.Hash;
 import com.password4j.Password;
+
+import nl.sogyo.financialApp.exception.UserNotFoundException;
 
 public class UserDao implements IUserDAO{
 
@@ -112,7 +115,30 @@ public class UserDao implements IUserDAO{
             }
             return false;
     }
-	
+
+    public HashMap<String, String> loginUser(String email, String password){
+        HashMap<String, String> sessionCredentials = new HashMap<String, String>(); 
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
+            stmt.setString(1, email);
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()){
+                String hashedPassword = resultSet.getString("password_hash");
+                if (isPasswordCorrect(hashedPassword, password));
+                    Integer userId = resultSet.getInt("id");
+                    sessionCredentials.put("userEmail", email);
+                    sessionCredentials.put("userId", userId.toString());
+                    return sessionCredentials;
+                } else {
+                    // TODO : Replace null by exception
+                    return null;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new UserNotFoundException("User is not found");
+            }
+    }
+
     @Override
 	public List<User> findAll() {
         List<User> users = new ArrayList<>();

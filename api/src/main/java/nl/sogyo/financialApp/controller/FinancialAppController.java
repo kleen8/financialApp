@@ -1,5 +1,7 @@
 package nl.sogyo.financialApp.controller;
 
+import java.util.HashMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class FinancialAppController{
     
     @GetMapping("/hello")
     public String sayHello(){
+        Object userEmail = session.getAttribute("userEmail");
+        System.out.println(userEmail);
         return "Hello";
     }
 
@@ -64,13 +68,13 @@ public class FinancialAppController{
             JSONObject jsonObject = new JSONObject(jsonString);
             String email = jsonObject.optString("email", "").trim();
             String password = jsonObject.optString("password", "").trim();
-            if (database.isLoginCorrect(email, password)){
-                    int userId = database.getUserIdByEmail(email);
-                    session.setAttribute("userId", userId);
-                    session.setAttribute("userEmail", email);
-                    return ResponseEntity.ok("User excists");
-                }
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
+            HashMap<String, String> sessionCredentials = database.loginUser(email, password);
+            if (sessionCredentials != null){
+                session.setAttribute("userId", sessionCredentials.get("userId"));
+                session.setAttribute("userEmail", sessionCredentials.get("userEmail"));
+                return ResponseEntity.ok("User excists");
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
