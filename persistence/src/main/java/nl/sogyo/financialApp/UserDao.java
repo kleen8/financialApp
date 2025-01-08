@@ -7,8 +7,6 @@ import java.util.List;
 import com.password4j.Hash;
 import com.password4j.Password;
 
-import nl.sogyo.financialApp.exception.UserNotFoundException;
-
 public class UserDao implements IUserDAO{
 
     private final String saveUserQuery = """
