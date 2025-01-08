@@ -1,8 +1,7 @@
 package nl.sogyo.financialApp;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +15,7 @@ import nl.sogyo.financialApp.exception.AuthenticationException;
 
 public class UserDao implements IUserDAO{
 
-    private static final Logger LOGGER = LogManager.getLogger(UserDao.class);
-
-    private static final Logger SQL_LOGGER = LogManager.getLogger("SQLExceptionLogger");
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
 
 
     private final String saveUserQuery = """
@@ -69,7 +65,7 @@ public class UserDao implements IUserDAO{
             stmt.executeUpdate();
             connection.close();
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -89,7 +85,7 @@ public class UserDao implements IUserDAO{
                 }
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -104,7 +100,7 @@ public class UserDao implements IUserDAO{
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             return false;
         }
     }
@@ -132,7 +128,7 @@ public class UserDao implements IUserDAO{
                 }
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -148,7 +144,7 @@ public class UserDao implements IUserDAO{
                 users.add(user);
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
         return users;
@@ -168,7 +164,7 @@ public class UserDao implements IUserDAO{
             stmt.setString(9, user.getEmail());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -180,7 +176,7 @@ public class UserDao implements IUserDAO{
             stmt.setString(1, email);
             stmt.executeUpdate();
         } catch (Exception e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -224,7 +220,7 @@ public class UserDao implements IUserDAO{
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
         throw new UserNotFoundException("User with email: " + email + " not found");
