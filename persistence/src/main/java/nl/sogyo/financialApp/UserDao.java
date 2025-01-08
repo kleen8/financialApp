@@ -9,6 +9,7 @@ import com.password4j.Hash;
 import com.password4j.Password;
 
 import nl.sogyo.financialApp.exception.UserNotFoundException;
+import nl.sogyo.financialApp.exception.AuthenticationException;
 
 public class UserDao implements IUserDAO{
 
@@ -45,8 +46,7 @@ public class UserDao implements IUserDAO{
 	@Override
 	public void save(User user, String password) {
         String passwordHash = hashPassword(password);
-        try {
-            Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = DatabaseConnection.getConnection()){
             PreparedStatement stmt = connection.prepareStatement(saveUserQuery);
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getFirstName());
@@ -59,8 +59,9 @@ public class UserDao implements IUserDAO{
             stmt.setString(9, passwordHash);
             stmt.executeUpdate();
             connection.close();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Database error occured");
         }
 	}
 
@@ -74,12 +75,14 @@ public class UserDao implements IUserDAO{
             try (ResultSet resultSet = stmt.executeQuery()){
                 if (resultSet.next()) {
                     return mapToUser(resultSet);
-                    }
+                } else {
+                    throw new UserNotFoundException("User is not found");
                 }
+            }
             } catch (SQLException e) {
                 e.printStackTrace();
+                throw new RuntimeException("Database error occured");
             }
-        return null;
     }
 
 
@@ -97,26 +100,29 @@ public class UserDao implements IUserDAO{
             }
     }
 
-    public HashMap<String, String> loginUser(String email, String password){
+    public HashMap<String, String> loginUser(String email, String password) {
         HashMap<String, String> sessionCredentials = new HashMap<String, String>(); 
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
             stmt.setString(1, email);
-            ResultSet resultSet = stmt.executeQuery();
-            if (resultSet.next()){
-                String hashedPassword = resultSet.getString("password_hash");
-                if (isPasswordCorrect(hashedPassword, password));
-                    Integer userId = resultSet.getInt("id");
-                    sessionCredentials.put("userEmail", email);
-                    sessionCredentials.put("userId", userId.toString());
-                    return sessionCredentials;
-                } else {
-                    // TODO : Replace null by exception
-                    return null;
+            try (ResultSet resultSet = stmt.executeQuery()){
+                if (resultSet.next()){
+                    String hashedPassword = resultSet.getString("password_hash");
+                    if (isPasswordCorrect(hashedPassword, password)){
+                        Integer userId = resultSet.getInt("id");
+                        sessionCredentials.put("userEmail", email);
+                        sessionCredentials.put("userId", userId.toString());
+                        return sessionCredentials;
+                    } else {
+                        throw new AuthenticationException("Authentication incorrect");
+                    }
+                 } else {
+                        throw new UserNotFoundException("User with email: " + email + " not found");
                 }
+              }
             } catch (SQLException e) {
                 e.printStackTrace();
-                throw new UserNotFoundException("User is not found");
+                throw new RuntimeException("Database error occured");
             }
     }
 
@@ -130,8 +136,9 @@ public class UserDao implements IUserDAO{
                 User user = mapToUser(resultSet);
                 users.add(user);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Database error occured");
         }
         return users;
 	}
@@ -150,7 +157,8 @@ public class UserDao implements IUserDAO{
             stmt.setString(9, user.getEmail());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();            
+            e.printStackTrace();
+            throw new RuntimeException("Database error occured");
         }
 	}
 
@@ -162,6 +170,7 @@ public class UserDao implements IUserDAO{
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("Database error occured");
         }
 	}
 
@@ -207,6 +216,7 @@ public class UserDao implements IUserDAO{
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Database error occured");
         }
         return -1;
     }

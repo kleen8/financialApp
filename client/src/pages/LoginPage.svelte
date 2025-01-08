@@ -19,13 +19,13 @@
                   },
                   body: JSON.stringify(loginCredentials),
               });
+              console.log(response.status);
+              const message = await response.text();
               if(response.ok){
-                  console.log(await response.text());
+                  console.log(message);
                   push("/home");
-              } else if (response.status === 401){
-                  alert("Invalid email or password");
               } else {
-                  alert("An error occurred please try again");
+                  alert("Status: " + response.status + " Message: " + message);
               }
           } catch (error) {
               console.error("Network error:", error);

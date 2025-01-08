@@ -75,7 +75,7 @@ public class FinancialAppController{
                 return ResponseEntity.ok("User excists");
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email or password incorrect");
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
