@@ -1,7 +1,7 @@
 <script>
+
     import { push } from "svelte-spa-router";
     
-    let apiBaseUrl = import.meta.env.VITE_API_URL 
     let password = '';
     let name = '';
     let familyName = '';
@@ -18,36 +18,35 @@
     let isPasswordValid = true
 
     async function  handleAccountCreation(){
-        await callHello();
-        console.log(apiBaseUrl);
         if (isFormValid()){
             console.log("Form is valid");
             const user = userToJson();
-            const response = await fetch("/api/createUser", {
-                method : "POST",
-                headers : {
-                    "Content-Type" : "application/json",
-                },
-                body: JSON.stringify(user),
-            });
-            if(!response.ok) {
-                console.error("Account is not created", response.statusText);
-                return;
-            } else {
-                console.log("account is created")
+
+            try {
+
+                const response = await fetch("/api/createUser", {
+                    method : "POST",
+                    headers : {
+                        "Content-Type" : "application/json",
+                    },
+                    body: JSON.stringify(user),
+                });
+                
+                const message = await response.text();
+
+
+                if(!response.ok) {
+                    alert(message);
+                    return;
+                } 
+                console.log("account is created");
+                push("/");
+            } catch (error) {
+                console.error("Network or server error:", error);
             }
         } else {
             alert("Correct the login form");
         }
-    }
-    
-
-    async function callHello(){
-        const url = "api/hello";
-        console.log(url);
-        let response = await fetch(url);
-        let text = await response.text();
-        console.log(text);
     }
 
     function userToJson(){
@@ -59,7 +58,8 @@
             "city" : city,
             "zipCode" : zipcode,
             "emailUser" : email_user,
-            "country" : country
+            "country" : country,
+            "password" : password
         }
         return user;
     }
@@ -117,9 +117,7 @@
 </script>
 
 <main>
-
     <h1>Welcome to account creation</h1>
-
     <form on:submit|preventDefault={handleAccountCreation} class="account-creation">
         <input type="email" 
         placeholder="Email" 
@@ -165,11 +163,9 @@
         <input type="text" placeholder="House number" bind:value={houseNumber} required/>
         <input type="text" placeholder="Zipcode" bind:value={zipcode} required/>
         <button type="submit" 
-            on:click={handleAccountCreation}
             disabled={!isFormValid()}
             >Create Account</button>
     </form>
-
 </main>
 
 
