@@ -69,7 +69,7 @@ public class UserDao implements IUserDAO{
             stmt.executeUpdate();
             connection.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -89,7 +89,6 @@ public class UserDao implements IUserDAO{
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
@@ -105,7 +104,7 @@ public class UserDao implements IUserDAO{
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             return false;
         }
     }
@@ -133,7 +132,7 @@ public class UserDao implements IUserDAO{
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -149,7 +148,7 @@ public class UserDao implements IUserDAO{
                 users.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
         return users;
@@ -169,7 +168,7 @@ public class UserDao implements IUserDAO{
             stmt.setString(9, user.getEmail());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -181,7 +180,7 @@ public class UserDao implements IUserDAO{
             stmt.setString(1, email);
             stmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -225,6 +224,7 @@ public class UserDao implements IUserDAO{
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
         throw new UserNotFoundException("User with email: " + email + " not found");
