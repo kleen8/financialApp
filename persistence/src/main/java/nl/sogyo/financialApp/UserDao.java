@@ -190,5 +190,19 @@ public class UserDao implements IUserDAO{
         
     }
 
+    public int getUserIdByEmail(String email) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
+            stmt.setString(1, email);
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()){
+                return (int) resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }
 

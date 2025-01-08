@@ -65,6 +65,8 @@ public class FinancialAppController{
             String email = jsonObject.optString("email", "").trim();
             String password = jsonObject.optString("password", "").trim();
             if (database.isLoginCorrect(email, password)){
+                    int userId = database.getUserIdByEmail(email);
+                    session.setAttribute("userId", userId);
                     session.setAttribute("userEmail", email);
                     return ResponseEntity.ok("User excists");
                 }
