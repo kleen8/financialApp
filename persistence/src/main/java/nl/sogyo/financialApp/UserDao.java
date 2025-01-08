@@ -29,6 +29,18 @@ public class UserDao implements IUserDAO{
     DELETE FROM users WHERE email = ?;
     """;
 
+    private final String updateUserEmailQry = """
+    UPDATE users 
+    SET first_name = COALESCE(?, first_name),
+        last_name = COALESCE(?, last_name),
+        street_name = COALESCE(?, street_name),
+        zip_code = COALESCE(?, zip_code),
+        house_number = COALESCE(?, house_number),
+        city = COALESCE(?, city),
+        county = COALESCE(?, country),
+      WHERE email = ?;
+    """;
+
 	@Override
 	public void save(User user, String password) {
         String passwordHash = hashPassword(password);
@@ -121,8 +133,20 @@ public class UserDao implements IUserDAO{
 
 	@Override
 	public void update(User user) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'update'");
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(updateUserEmailQry);
+            stmt.setString(1, user.getFirstName());
+            stmt.setString(2, user.getLastName());
+            stmt.setString(3, user.getStreetName());
+            stmt.setString(4, user.getZipCode());
+            stmt.setString(5, user.getHouseNumber());
+            stmt.setString(6, user.getCity());
+            stmt.setString(7, user.getCountry());
+            stmt.setString(9, user.getEmail());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();            
+        }
 	}
 
 	@Override
