@@ -1,8 +1,5 @@
 package nl.sogyo.financialApp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class User {
 
     protected String firstName;
@@ -13,8 +10,6 @@ public class User {
     protected String houseNumber;
     protected String city;
     protected String country;
-    protected List<Expense> expenses = new ArrayList<Expense>();
-    protected List<Income> incomes = new ArrayList<Income>();
 
     private User(String firstName, String lastName,
             String email, String streetName, String zipCode, String houseNumber,
