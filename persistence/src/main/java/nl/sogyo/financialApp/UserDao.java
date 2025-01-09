@@ -24,6 +24,10 @@ public class UserDao implements IUserDAO{
     (?, ?, ?, ?, ?, ?, ?, ?, ?);
     """;
 
+    private final String findUserById = """
+    SELECT * FROM users WHERE id = ?;
+    """;
+
     private final String findUserByEmail = """
     SELECT * FROM users WHERE email = ?;
     """;
@@ -44,7 +48,7 @@ public class UserDao implements IUserDAO{
     zip_code = COALESCE(?, zip_code),
     house_number = COALESCE(?, house_number),
     city = COALESCE(?, city),
-    county = COALESCE(?, country),
+    country = COALESCE(?, country)
     WHERE email = ?;
     """;
 
@@ -71,6 +75,26 @@ public class UserDao implements IUserDAO{
     }
 
     // because then the frontend needs to get notified
+	@Override
+    public User findById(int id){
+        try (Connection connection = DatabaseConnection.getConnection()){
+            PreparedStatement stmt = connection.prepareStatement(findUserById);
+            stmt.setInt(1, id);
+            try (ResultSet resultSet = stmt.executeQuery()){
+                if (resultSet.next()) {
+                    return mapToUser(resultSet);
+                } else {
+                    throw new UserNotFoundException("User is not found");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Database error occured");
+        }
+    }
+
+
+    // because then the frontend needs to get notified
     @Override
     public User findByEmail(String email){
         try {
@@ -92,8 +116,7 @@ public class UserDao implements IUserDAO{
 
 
     public boolean doesUserExist(String email){
-        try {
-            Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
             stmt.setString(1, email);
             try (ResultSet resultSet = stmt.executeQuery()){
@@ -225,6 +248,7 @@ public class UserDao implements IUserDAO{
         }
         throw new UserNotFoundException("User with email: " + email + " not found");
     }
+
 
 }
 
