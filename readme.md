@@ -43,3 +43,23 @@ The financial app can be used to track your spendings and your income, based on 
 * Complex investment tracking: Advanced features for managing stocks, bonds, or other investments.
 * Cryptocurrency tracking: Support for managing and tracking cryptocurrencies.
 * AI-driven financial advice: Automated financial recommendations based on user spending habits.
+
+
+
+
+#### database setup queries ####
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    street_name VARCHAR(255) NOT NULL,
+    zip_code VARCHAR(20) NOT NULL,
+    house_number VARCHAR(20) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL
+);
+
+
