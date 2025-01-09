@@ -9,6 +9,8 @@ services:
       - "8080:8080"  # Exposes Spring Boot app on port 8080
     networks:
       - app-network
+    volumes:
+      - ./logs:/app/logs
 
   frontend:
     build:

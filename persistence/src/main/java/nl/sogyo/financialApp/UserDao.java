@@ -1,8 +1,7 @@
 package nl.sogyo.financialApp;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,16 +15,17 @@ import nl.sogyo.financialApp.exception.AuthenticationException;
 
 public class UserDao implements IUserDAO{
 
-    private static final Logger LOGGER = LogManager.getLogger(UserDao.class);
-
-    private static final Logger SQL_LOGGER = LogManager.getLogger("SQLExceptionLogger");
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
 
 
     private final String saveUserQuery = """
     INSERT INTO users (email, first_name, last_name,
     street_name, zip_code, house_number, city, country, password_hash) VALUES 
     (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    """;
+
+    private final String findUserById = """
+    SELECT * FROM users WHERE id = ?;
     """;
 
     private final String findUserByEmail = """
@@ -48,7 +48,7 @@ public class UserDao implements IUserDAO{
     zip_code = COALESCE(?, zip_code),
     house_number = COALESCE(?, house_number),
     city = COALESCE(?, city),
-    county = COALESCE(?, country),
+    country = COALESCE(?, country)
     WHERE email = ?;
     """;
 
@@ -69,10 +69,30 @@ public class UserDao implements IUserDAO{
             stmt.executeUpdate();
             connection.close();
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
+
+    // because then the frontend needs to get notified
+	@Override
+    public User findById(int id){
+        try (Connection connection = DatabaseConnection.getConnection()){
+            PreparedStatement stmt = connection.prepareStatement(findUserById);
+            stmt.setInt(1, id);
+            try (ResultSet resultSet = stmt.executeQuery()){
+                if (resultSet.next()) {
+                    return mapToUser(resultSet);
+                } else {
+                    throw new UserNotFoundException("User is not found");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Database error occured");
+        }
+    }
+
 
     // because then the frontend needs to get notified
     @Override
@@ -89,22 +109,21 @@ public class UserDao implements IUserDAO{
                 }
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
 
 
     public boolean doesUserExist(String email){
-        try {
-            Connection connection = DatabaseConnection.getConnection();
+        try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
             stmt.setString(1, email);
             try (ResultSet resultSet = stmt.executeQuery()){
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             return false;
         }
     }
@@ -132,7 +151,7 @@ public class UserDao implements IUserDAO{
                 }
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -148,7 +167,7 @@ public class UserDao implements IUserDAO{
                 users.add(user);
             }
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
         return users;
@@ -168,7 +187,7 @@ public class UserDao implements IUserDAO{
             stmt.setString(9, user.getEmail());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -180,7 +199,7 @@ public class UserDao implements IUserDAO{
             stmt.setString(1, email);
             stmt.executeUpdate();
         } catch (Exception e) {
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
     }
@@ -224,11 +243,12 @@ public class UserDao implements IUserDAO{
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            SQL_LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
         throw new UserNotFoundException("User with email: " + email + " not found");
     }
+
 
 }
 

@@ -1,8 +1,5 @@
 # Maven target directory
 target/
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/user_database
 # Logs and temporary files
 *.log
 *.tmp
@@ -16,6 +13,7 @@ target/
 .settings/
 .metadata
 financialApp/.metadata
+**/.factorypath
 #vscode specific files
 .vscode
 

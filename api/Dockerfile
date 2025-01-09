@@ -22,5 +22,8 @@ COPY --from=backend-builder /app/api/target/api-1.0-SNAPSHOT.jar /app/backend.ja
 
 EXPOSE 8080
 
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+RUN chmod -R 777 /app/backend.jar
+
 CMD ["java", "-jar", "/app/backend.jar"]
 
