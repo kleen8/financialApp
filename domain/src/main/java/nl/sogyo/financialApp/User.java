@@ -138,4 +138,11 @@ public class User {
             this.firstName = newName;
         }
     }
+
+    @Override
+    public String toString(){
+        return "Name: " + firstName + " Last name: " + lastName + " Email: " + email;
+    }
+
+
 }

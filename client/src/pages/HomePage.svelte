@@ -43,11 +43,4 @@
 </main>
 
 <style>
-
-   #header{
-       position: absolute;
-       top: 0q;
-   }
-
-
 </style>

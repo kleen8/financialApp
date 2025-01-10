@@ -30,7 +30,7 @@ public class FinancialAppController{
         return "Hello";
     }
 
-    @PostMapping("/createUser")
+    @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody String jsonString){
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -61,7 +61,7 @@ public class FinancialAppController{
         }
     }
 
-    @PostMapping("/loginUser")
+    @PostMapping("/login-user")
     public ResponseEntity<String> loginUser(@RequestBody String jsonString, HttpSession session){
         UserDao database = new UserDao();
         try {
@@ -91,6 +91,14 @@ public class FinancialAppController{
         }
     }
 
-
-
+    @PostMapping("/create-account")
+    public ResponseEntity<String> addAccount(@RequestBody String jsonString, HttpSession session) {
+        UserDao userData = new UserDao();
+        String userId = (String) session.getAttribute("userId");
+        int userIdInt = Integer.parseInt(userId);
+        User user = userData.findById(userIdInt);
+        System.out.println(user.toString());
+        return ResponseEntity.ok().body("everything Okey");
+    }
+        
 }

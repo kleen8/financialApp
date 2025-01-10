@@ -19,12 +19,22 @@ function resetForm() {
     accountName = "";
 }
 
-function createAccount() {
+async function createAccount() {
     if (isNaN(balance) || accountName === ""){
         alert("Please fill in the fields.");
     } else {
         updateValues();
-        console.log("Account created:", account);
+        const response = await fetch("/api/create-account", {
+            method: "POST",
+            headers: {
+                "Content-Type" : "application/json",
+                },
+            body: JSON.stringify(account),
+        });
+        const statusCode = response.status;
+        const responseMessage = await response.text();
+        console.log(statusCode);
+        console.log(responseMessage);
         showModal = false;
         resetForm();
     }
