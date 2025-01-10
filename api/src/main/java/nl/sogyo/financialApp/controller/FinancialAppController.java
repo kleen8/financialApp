@@ -20,13 +20,20 @@ import nl.sogyo.financialApp.*;
 @RequestMapping("/api")
 public class FinancialAppController{
 
+    private final IUserDAO userDAO;
+    private final HttpSession session;
+    
     @Autowired
-    private HttpSession session;
+    public FinancialAppController(IUserDAO userDAO, HttpSession session){
+        this.userDAO = userDAO;
+        this.session = session;
+    }
+
     
     @GetMapping("/hello")
     public String sayHello(){
         Object userEmail = session.getAttribute("userEmail");
-        System.out.println(userEmail);
+        System.out.println(userDAO.doesUserExist((String) userEmail));
         return "Hello";
     }
 
@@ -45,11 +52,10 @@ public class FinancialAppController{
             String password = jsonObject.optString("password", "").trim();
             User newUser = User.createUser(firstName, lastName, email, streetName, zipCode, houseNumber,
             city, country);
-            UserDao database = new UserDao();
-            if (database.doesUserExist(email)){
+            if (userDAO.doesUserExist(email)){
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
             } else {
-                database.save(newUser, password); 
+                userDAO.save(newUser, password); 
                 return ResponseEntity.ok("User created succesfully");
             }
         } catch (JSONException e) {
@@ -63,12 +69,11 @@ public class FinancialAppController{
 
     @PostMapping("/login-user")
     public ResponseEntity<String> loginUser(@RequestBody String jsonString, HttpSession session){
-        UserDao database = new UserDao();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             String email = jsonObject.optString("email", "").trim();
             String password = jsonObject.optString("password", "").trim();
-            HashMap<String, String> sessionCredentials = database.loginUser(email, password);
+            HashMap<String, String> sessionCredentials = userDAO.loginUser(email, password);
             if (sessionCredentials != null){
                 session.setAttribute("userId", sessionCredentials.get("userId"));
                 session.setAttribute("userEmail", sessionCredentials.get("userEmail"));
@@ -93,10 +98,9 @@ public class FinancialAppController{
 
     @PostMapping("/create-account")
     public ResponseEntity<String> addAccount(@RequestBody String jsonString, HttpSession session) {
-        UserDao userData = new UserDao();
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
-        User user = userData.findById(userIdInt);
+        User user = userDAO.getUserWithId(userIdInt);
         System.out.println(user.toString());
         return ResponseEntity.ok().body("everything Okey");
     }
