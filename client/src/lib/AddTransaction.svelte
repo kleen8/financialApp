@@ -4,10 +4,10 @@
     let amount = 0;
     let category = "";
     let recurrent = false;
-    let timeInterval = "WEEKS";
+    let timeInterval = "Weekly";
     let timestamp = new Date().toISOString().slice(0,16);
 
-    const timeIntervals = ["DAYS" , "WEEKS" , "MONTHS" , "YEARS" ];
+    const timeIntervals = ["Dayly","Weekly" , "Monthly" , "Yearly" ];
 
     let transaction = {
         type : transactionType,
@@ -68,7 +68,7 @@
   }
 
   .modal-content {
-    background: grey;
+    background-color: rgba(0, 0, 0, 4);
     padding: 20px;
     border-radius: 8px;
     width: 400px;
@@ -127,7 +127,7 @@
   <div class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Add {transactionType}</h2>
+        <h2>Add Transaction</h2>
         <button on:click={() => (showModal = false)}>✖</button>
       </div>
 
@@ -176,7 +176,7 @@
 
       <div class="actions">
         <button on:click={() => (showModal = false)}>Cancel</button>
-        <button on:click={updateTransaction}>Add {transactionType}</button>
+        <button on:click={updateTransaction}>Add Transaction</button>
       </div>
     </div>
   </div>
