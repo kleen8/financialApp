@@ -1,5 +1,8 @@
 package nl.sogyo.financialApp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 
     protected String firstName;
@@ -10,6 +13,8 @@ public class User {
     protected String houseNumber;
     protected String city;
     protected String country;
+    
+    protected List<Account> accounts = new ArrayList<Account>();
 
     private User(String firstName, String lastName,
             String email, String streetName, String zipCode, String houseNumber,
@@ -47,6 +52,14 @@ public class User {
         }
 
         return new User(firstName, lastName, email, streetName, zipCode, houseNumber, city, country);
+    }
+    
+    public void addAccount(Account account){
+        accounts.add(account);
+    }
+
+    public List<Account> getAccounts(){
+        return accounts;
     }
 
     private static String sanitizeAndDecapitalize(String input){
@@ -143,6 +156,27 @@ public class User {
     public String toString(){
         return "Name: " + firstName + " Last name: " + lastName + " Email: " + email;
     }
-
+    @Override
+    public boolean equals(Object obj) {
+    // Check if the same object
+    if (this == obj) {
+        return true;
+    }
+    // Check for null or if the objects are of different types
+    if (obj == null || getClass() != obj.getClass()) {
+        return false;
+    }
+    // Cast the object to a User for field comparison
+    User user = (User) obj;
+    // Compare all relevant fields for equality
+    return firstName.equals(user.firstName) &&
+           lastName.equals(user.lastName) &&
+           email.equals(user.email) &&
+           streetName.equals(user.streetName) &&
+           zipCode.equals(user.zipCode) &&
+           houseNumber.equals(user.houseNumber) &&
+           city.equals(user.city) &&
+           country.equals(user.country);
+    }
 
 }

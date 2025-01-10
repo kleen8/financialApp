@@ -4,55 +4,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneralAccount implements IAccount {
-
-    private User user;
-    private double balance = 0;
-    private AccountType accountType = AccountType.GENERAL;
+public class GeneralAccount extends Account{
 
     protected List<Expense> expenses = new ArrayList<Expense>();
     protected List<Income> incomes = new ArrayList<Income>();
 
-    public GeneralAccount(User user, double balance){
-            this.user = user;
-            this.balance = balance;
+    public GeneralAccount(String accountName, User owner, double balance){
+            super(accountName, owner, balance);
     }
 
-
-	@Override
-	public void deposit(double amount) {
-		if (amount > 0.0){
-            this.balance+=amount;
-        }else {
-            System.out.println("can't deposit negative values hennie");
-        }
-	}
-
-	@Override
-	public void withdraw(double amount) {
-        if (amount <= balance){
-            balance-=amount;
-        } else {
-            System.out.println("Can't withdraw more then you own");
-        };
-	}
-
-	@Override
-	public double getBalance() {
-        return balance;
-	}
-
-	@Override
-	public void transfer(IAccount targetAccount, double amount) {
-        if (amount <= this.balance && amount > 0){
-            withdraw(amount);
-            targetAccount.deposit(amount);
-        } else {
-            System.out.println("Insufficient amount");
-        }
-	}
-
-   
     public void addIncome(Income income) {
         incomes.add(income);
         deposit(income.getAmount());
@@ -79,14 +39,14 @@ public class GeneralAccount implements IAccount {
             if (income.isRecurrent() && shouldProcessTransaction(income, now)){
                 deposit(income.getAmount());
                 income.setTimestamp(now);
-                System.out.println("deposit now balance after: " + balance);
+                System.out.println("deposit now balance after: " + getBalance());
             }
         }
         for (Expense expense : expenses){
             if (expense.isRecurrent() && shouldProcessTransaction(expense, now)){
                 withdraw(expense.getAmount());
                 expense.setTimestamp(now);
-                System.out.println("withdraw now balance after: " + balance);
+                System.out.println("withdraw now balance after: " + getBalance());
             }
         }
     }
@@ -95,9 +55,18 @@ public class GeneralAccount implements IAccount {
         return expenses;
     }
 
-
     public List<Income> getIncomes() {
         return incomes;
+    }
+
+	@Override
+	public boolean transfer(double amount, Account targerAccount) {
+        if (amount > 0 && amount <= getBalance()){
+            withdraw(amount);
+            targerAccount.deposit(amount);
+            return true;
+        }
+        return false;
     }
 
 
