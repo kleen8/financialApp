@@ -1,8 +1,8 @@
 package nl.sogyo.financialApp;
 
-public class InvestmensAccount extends Account{
+public class InvestmentsAccount extends Account{
     
-    public InvestmensAccount(String accountName, User owner, double balance){
+    public InvestmentsAccount(String accountName, User owner, double balance){
         super(accountName, owner, balance);
     }
 
