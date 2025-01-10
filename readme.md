@@ -63,3 +63,16 @@ CREATE TABLE users (
 );
 
 
+
+CREATE TABLE accounts (
+    id SERIAL PRIMARY KEY,               -- Unique ID for each account
+    user_id INT NOT NULL,                -- Foreign key linking to the users table
+    account_type VARCHAR(50) NOT NULL,  -- Type of account: General, Savings, or Investment
+    account_name VARCHAR(255) NOT NULL, -- User-defined account name
+    balance NUMERIC(15, 2) DEFAULT 0.0, -- Account balance with precision for currency
+    created_at TIMESTAMP DEFAULT NOW(), -- Timestamp for account creation
+    updated_at TIMESTAMP DEFAULT NOW(), -- Timestamp for last update
+
+    -- Foreign key constraint linking user_id to the id in the users table
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
