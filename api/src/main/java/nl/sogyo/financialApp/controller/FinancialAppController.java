@@ -1,6 +1,7 @@
 package nl.sogyo.financialApp.controller;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -103,9 +104,39 @@ public class FinancialAppController{
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
         User user = userDAO.getUserWithId(userIdInt);
-        System.out.println(jsonString);
-        System.out.println(user.toString());
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            String account_type = jsonObject.optString("account_type").trim();
+            String account_name = jsonObject.optString("account_name").trim();
+            double balance = Double.parseDouble(jsonObject.optString("balance"));
+            Account account = null;
+            switch (account_type) {
+                case "General":
+                    account = new GeneralAccount(account_name, user, balance);
+                    break;
+                case "Savings":
+                    account = new SavingsAccount(account_name, user, balance);
+                    break;
+                case "Investing":
+                    account = new InvestmentsAccount(account_name, user, balance);
+                    break;
+                default:
+                    break;
+            }
+            if (account != null){
+                accountDAO.save(account, userIdInt);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("An error occured in /create-account");
+        }
         return ResponseEntity.ok().body("everything Okey");
     }
         
+    @GetMapping("get-accounts")
+    public ResponseEntity<String> getAccounts(){
+        String userId = (String) session.getAttribute("userId");
+        int userIdInt = Integer.parseInt(userId);
+        List<Account> accounts = accountDAO.getAllAccountWithUserId(userIdInt);
+        return ResponseEntity.ok().body("Accounts are called");        
+    }
 }

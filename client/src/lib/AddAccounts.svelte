@@ -8,9 +8,9 @@ let accountName = ""
 const accountTypes = ["General", "Saving", "Investing"];
 
 const account = {
-    type: accountType,
+    account_type: accountType,
     balance: balance,
-    accountName: accountName
+    account_name: accountName
 };
 
 function resetForm() {
@@ -41,9 +41,9 @@ async function createAccount() {
 }
 
 function updateValues(){
-    account.type = accountType;
+    account.account_type = accountType;
     account.balance = balance;
-    account.accountName = accountName;
+    account.account_name = accountName;
 }
 </script>
 

@@ -13,7 +13,7 @@ public class AccountDAO implements IAccountDAO{
 
     private final String saveAccountQuery = """
     INSERT INTO accounts (user_id, account_type, account_name, balance)
-    VALUES (?, ?, ?, ?)";
+    VALUES (?, ?, ?, ?);
     """;
 
     private final String findAccountById = """
