@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
 import nl.sogyo.financialApp.*;
+import nl.sogyo.financialApp.controller.DTO.UserDTO;
 
 @RestController
 @RequestMapping("/api")
@@ -41,29 +42,28 @@ public class FinancialAppController{
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestBody String jsonString){
+    public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO){
         try {
-            JSONObject jsonObject = new JSONObject(jsonString);
-            String firstName = jsonObject.optString("firstName", "").trim();
-            String lastName = jsonObject.optString("familyName", "").trim();
-            String email = jsonObject.optString("emailUser", "").trim();
-            String streetName = jsonObject.optString("streetName", "").trim();
-            String zipCode = jsonObject.optString("zipCode", "").trim();
-            String houseNumber = jsonObject.optString("houseNumber", "").trim();
-            String city = jsonObject.optString("city", "").trim();
-            String country = jsonObject.optString("country", "").trim();
-            String password = jsonObject.optString("password", "").trim();
-            User newUser = User.createUser(firstName, lastName, email, streetName, zipCode, houseNumber,
-            city, country);
-            if (userDAO.doesUserExist(email)){
+            System.out.println("first name: "+ userDTO.getFirstName());
+            System.out.println("Last name: " + userDTO.getLastName());
+            User user = User.createUser(
+                userDTO.getFirstName(),
+                userDTO.getLastName(),
+                userDTO.getEmailUser(),
+                userDTO.getStreetName(),
+                userDTO.getZipCode(),
+                userDTO.getHouseNumber(),
+                userDTO.getCity(),
+                userDTO.getCountry()
+            );
+            if (userDAO.doesUserExist(userDTO.getEmailUser())){
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
-            } else {
-                userDAO.save(newUser, password); 
+            } else if (user != null) {
+                userDAO.save(user, userDTO.getPassword()); 
                 return ResponseEntity.ok("User created succesfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User is not created");
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Invalid JSON payload");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
