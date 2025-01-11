@@ -22,10 +22,12 @@ public class FinancialAppController{
 
     private final IUserDAO userDAO;
     private final HttpSession session;
-    
+    private final IAccountDAO accountDAO; 
+
     @Autowired
-    public FinancialAppController(IUserDAO userDAO, HttpSession session){
+    public FinancialAppController(IUserDAO userDAO,IAccountDAO accountDAO ,HttpSession session){
         this.userDAO = userDAO;
+        this.accountDAO = accountDAO;
         this.session = session;
     }
 
@@ -101,6 +103,7 @@ public class FinancialAppController{
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
         User user = userDAO.getUserWithId(userIdInt);
+        System.out.println(jsonString);
         System.out.println(user.toString());
         return ResponseEntity.ok().body("everything Okey");
     }

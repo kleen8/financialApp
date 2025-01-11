@@ -70,7 +70,6 @@ public class UserDao implements IUserDAO{
             stmt.setString(8, user.getCountry());
             stmt.setString(9, passwordHash);
             stmt.executeUpdate();
-            connection.close();
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
@@ -170,11 +169,11 @@ public class UserDao implements IUserDAO{
                 User user = mapToUser(resultSet);
                 users.add(user);
             }
+            return users;
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
-        return users;
     }
 
     @Override

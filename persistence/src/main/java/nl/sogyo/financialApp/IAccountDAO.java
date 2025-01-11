@@ -3,8 +3,9 @@ package nl.sogyo.financialApp;
 import java.util.List;
 
 public interface IAccountDAO {
-    void save(Account account);
+    void save(Account account, int userId);
     void delete(Account account);
-    void update(Account account);
+    void update(Account account, int accountId);
     List<Account> getAllAccountWithUserId(int id);
+    Account getAccountWithId(int id);
 }

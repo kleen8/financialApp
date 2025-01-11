@@ -3,7 +3,7 @@ target/
 # Logs and temporary files
 *.log
 *.tmp
-
+logs/**
 # Compiled Java classes
 *.class
 
