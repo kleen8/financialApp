@@ -1,7 +1,7 @@
 <script>
-   import { onMount } from 'svelte';
-
-   let accounts = [];
+    import { onMount } from 'svelte';
+    import { accounts }  from '../stores/stores.js';
+   let accountsList = [];
    let error = null;
 
    const fetchAccounts = async () => {
@@ -10,7 +10,8 @@
             if (!response.ok){
                throw new Error('Error: ' + response.statusText);
            }
-            accounts = await response.json();
+            const data = await response.json();
+            accounts.set(data);
        } catch (err){
         error = err.message;
         console.error(err);
@@ -40,7 +41,6 @@
         margin: 5px 0;
     }
     .error {
-        color: red;
         font-weight: bold;
     }
 </style>
@@ -48,12 +48,11 @@
 
 
 {#if error}
-    <p class="error">Failed to load accounts: {error}</p>
+    <p class="error">No accounts found. Create a new one!</p>
 {:else}
-
     <!-- Render Accounts List -->
     <ul class="account-list">
-        {#each accounts as account}
+        {#each accountsList as account}
             <li class="account-item">
                 <h3>{account.accountName}</h3>
                 <p>Type: {account.accountType}</p>

@@ -1,5 +1,8 @@
 <script>
 
+import { accounts } from "../stores/stores.js";
+import { writable } from "svelte/store";
+
 let showModal = false;
 let accountType = "General";
 let balance = 0;
@@ -7,11 +10,11 @@ let accountName = ""
 
 const accountTypes = ["General", "Saving", "Investing"];
 
-const account = {
-    account_type: accountType,
-    balance: balance,
-    account_name: accountName
-};
+const account = writable({
+    accountName: "",
+    accountType: "General",
+    balance: "0"
+});
 
 function resetForm() {
     accountType = "General";
@@ -20,11 +23,9 @@ function resetForm() {
 }
 
 async function createAccount() {
-    if (isNaN(balance) || accountName === ""){
+    if ($account.balance === "" || $account.accountName === ""){
         alert("Please fill in the fields.");
     } else {
-        updateValues();
-        console.log(account.account_type);
         const response = await fetch("/api/create-account", {
             method: "POST",
             headers: {
@@ -32,22 +33,14 @@ async function createAccount() {
                 },
             body: JSON.stringify(account),
         });
-        const statusCode = response.status;
-        const responseMessage = await response.text();
-        console.log(statusCode);
-        console.log(responseMessage);
+        console.log("call made");
+        const newAccount = await response.text();
+        accounts.update(currentAccounts => [...currentAccounts, newAccount]);
         showModal = false;
         resetForm();
     }
 }
-
-function updateValues(){
-    account.account_type = accountType;
-    account.balance = balance;
-    account.account_name = accountName;
-}
 </script>
-
 <style>
 .modal {
     position: fixed;
@@ -124,7 +117,7 @@ function updateValues(){
 
             <div class="form-group">
                 <label>Account Type
-                    <select bind:value={accountType}>
+                    <select bind:value={$account.accountType}>
                         {#each accountTypes as type}
                             <option value={type}>{type}</option>
                         {/each}
@@ -136,7 +129,7 @@ function updateValues(){
                 <label>Account Name
                     <input
                         type="text"
-                        bind:value={accountName}
+                        bind:value={$account.accountName}
                         placeholder="Account name"
                         required
                     />
@@ -149,7 +142,7 @@ function updateValues(){
                     <input
                         type="number"
                         step="0.01"
-                        bind:value={balance}
+                        bind:value={$account.balance}
                         placeholder="Enter initial balance"
                         required
                     />

@@ -101,38 +101,45 @@ public class FinancialAppController{
     }
 
     @PostMapping("/create-account")
-    public ResponseEntity<String> addAccount(@RequestBody String jsonString, HttpSession session) {
-        String userId = (String) session.getAttribute("userId");
-        int userIdInt = Integer.parseInt(userId);
-        User user = userDAO.getUserWithId(userIdInt);
+    public ResponseEntity<AccountDTO> addAccount(@RequestBody AccountDTO accountDTO) {
         try {
-            JSONObject jsonObject = new JSONObject(jsonString);
-            String account_type = jsonObject.optString("account_type").trim();
-            String account_name = jsonObject.optString("account_name").trim();
-            double balance = Double.parseDouble(jsonObject.optString("balance"));
+            System.out.println("In create account");
+            String userId = (String) session.getAttribute("userId");
+            int userIdInt = Integer.parseInt(userId);
+            User user = userDAO.getUserWithId(userIdInt);
+            String account_type = accountDTO.getAccountType(); 
+            String account_name = accountDTO.getAccountName(); 
+            double balance = accountDTO.getBalance();
             Account account = null;
             System.out.println(account_type);
             switch (account_type) {
                 case "General":
-                    account = new GeneralAccount(account_name, user, balance);
-                    break;
+                account = new GeneralAccount(account_name, user, balance);
+                break;
                 case "Saving":
-                    account = new SavingsAccount(account_name, user, balance);
-                    break;
+                account = new SavingsAccount(account_name, user, balance);
+                break;
                 case "Investing":
-                    account = new InvestmentsAccount(account_name, user, balance);
-                    break;
+                account = new InvestmentsAccount(account_name, user, balance);
+                break;
                 default:
-                    break;
+                break;
             }
             if (account != null){
                 System.out.println("Account made: " + account.getAccountType().getTypeName());
                 accountDAO.save(account, userIdInt);
+                //  AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
+                //                                      account.getAccountType().getTypeName(),
+                //                                      account.getBalance());
+                System.out.println(accountDTO);
+                ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("An error occured in /create-account");
+            e.printStackTrace();
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok().body("everything Okey");
+        System.out.println("hello");
+        return ResponseEntity.noContent().build();
     }
         
     @GetMapping("/get-accounts")

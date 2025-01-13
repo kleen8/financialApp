@@ -15,16 +15,6 @@
         password: "",
     });
 
-    let password = '';
-    let name = '';
-    let familyName = '';
-    let streetName = '';
-    let houseNumber = '';
-    let city = '';
-    let zipcode = '';
-    let email_user = '';
-    let country = '';
-
     let showRequirements = false;
     let showPassword = false;
     let isEmailValid = true;
