@@ -27,7 +27,7 @@ public class FinancialAppController{
     private final IAccountDAO accountDAO; 
 
     @Autowired
-    public FinancialAppController(IUserDAO userDAO,IAccountDAO accountDAO ,HttpSession session){
+    public FinancialAppController(IUserDAO userDAO, IAccountDAO accountDAO, HttpSession session){
         this.userDAO = userDAO;
         this.accountDAO = accountDAO;
         this.session = session;
@@ -110,11 +110,12 @@ public class FinancialAppController{
             String account_name = jsonObject.optString("account_name").trim();
             double balance = Double.parseDouble(jsonObject.optString("balance"));
             Account account = null;
+            System.out.println(account_type);
             switch (account_type) {
                 case "General":
                     account = new GeneralAccount(account_name, user, balance);
                     break;
-                case "Savings":
+                case "Saving":
                     account = new SavingsAccount(account_name, user, balance);
                     break;
                 case "Investing":
@@ -124,6 +125,7 @@ public class FinancialAppController{
                     break;
             }
             if (account != null){
+                System.out.println("Account made: " + account.getAccountType().getTypeName());
                 accountDAO.save(account, userIdInt);
             }
         } catch (Exception e) {
@@ -137,6 +139,7 @@ public class FinancialAppController{
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
         List<Account> accounts = accountDAO.getAllAccountWithUserId(userIdInt);
+        System.out.println(accounts);
         return ResponseEntity.ok().body("Accounts are called");        
     }
 }

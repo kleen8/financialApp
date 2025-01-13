@@ -69,5 +69,10 @@ public class GeneralAccount extends Account{
         return false;
     }
 
+	@Override
+	public AccountType getAccountType() {
+        return AccountType.GENERAL;
+	}
+
 
 }

@@ -17,4 +17,9 @@ public class InvestmentsAccount extends Account{
         }
         return false;
 	}
+
+	@Override
+	public AccountType getAccountType() {
+        return AccountType.INVESTMENTS;
+	}
 }

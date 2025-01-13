@@ -38,4 +38,5 @@ public abstract class Account {
     }
     
     public abstract boolean transfer(double amount, Account targerAccount);
+    public abstract AccountType getAccountType();
 }

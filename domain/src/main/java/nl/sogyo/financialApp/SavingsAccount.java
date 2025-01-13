@@ -17,4 +17,9 @@ public class SavingsAccount extends Account{
         }
         return false;
 	}
+
+	@Override
+	public AccountType getAccountType() {
+        return AccountType.SAVINGS;
+	}
 }

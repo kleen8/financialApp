@@ -24,6 +24,7 @@ async function createAccount() {
         alert("Please fill in the fields.");
     } else {
         updateValues();
+        console.log(account.account_type);
         const response = await fetch("/api/create-account", {
             method: "POST",
             headers: {

@@ -41,7 +41,7 @@ public class AccountDAO implements IAccountDAO{
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(saveAccountQuery);
             stmt.setInt(1, userId);
-            stmt.setString(2, account.getClass().getName());
+            stmt.setString(2, account.getAccountType().getTypeName());
             stmt.setString(3, account.getAccountName());
             stmt.setDouble(4, account.getBalance());
             stmt.executeUpdate();
@@ -68,7 +68,7 @@ public class AccountDAO implements IAccountDAO{
 	public void update(Account account, int accountId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(updateAccount);
-            stmt.setString(1, account.getClass().getName());
+            stmt.setString(1, account.getAccountType().getTypeName());
             stmt.setString(2, account.getAccountName());
             stmt.setDouble(3, account.getBalance());
             stmt.setInt(4, accountId);
@@ -95,7 +95,6 @@ public class AccountDAO implements IAccountDAO{
             } catch (Exception e) {
                 // TODO: handle exception
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -123,19 +122,17 @@ public class AccountDAO implements IAccountDAO{
         UserDao userDao = new UserDao();
         try {
             int userId = resultSet.getInt("user_id");
-            User user = userDao.getUserWithId(userId);
+            User owner = userDao.getUserWithId(userId);
             String account_name = resultSet.getString("account_name");
-            String account_type = resultSet.getString("account_type");
+            String account_typeStr = resultSet.getString("account_type");
             double balance = resultSet.getDouble("balance");
-            switch (account_type) {
-                case "GeneralAccount":
-                    return new GeneralAccount(account_name, user, balance);
-                case "SavingsAccount":
-                    return new SavingsAccount(account_name, user, balance);
-                case "InvestimentsAccount":
-                    return new InvestmentsAccount(account_name, user, balance);
-                default:
-                    break;
+            AccountType accountType = AccountType.fromTypeName(account_typeStr);
+            if (accountType == AccountType.GENERAL){
+                return new GeneralAccount(account_name, owner, balance);
+            } else if (accountType == AccountType.SAVINGS){
+                return new SavingsAccount(account_name, owner, balance);
+            } else if (accountType == AccountType.INVESTMENTS){
+                return new InvestmentsAccount(account_name, owner, balance);
             }
         } catch (Exception e){
             e.printStackTrace();
