@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
 import nl.sogyo.financialApp.*;
+import nl.sogyo.financialApp.controller.DTO.AccountDTO;
 import nl.sogyo.financialApp.controller.DTO.UserDTO;
 
 @RestController
@@ -135,11 +136,19 @@ public class FinancialAppController{
     }
         
     @GetMapping("/get-accounts")
-    public ResponseEntity<String> getAccounts(){
+    public ResponseEntity<List<AccountDTO>> getAccounts(HttpSession session){
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
         List<Account> accounts = accountDAO.getAllAccountWithUserId(userIdInt);
-        // TODO: The accounts need to be mapped to a json string for the frontend to use.
-        return ResponseEntity.ok().body("Accounts are called");        
+        if (accounts == null || accounts.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        List<AccountDTO> accountDTOs = accounts.stream()
+                                    .map(account -> new AccountDTO(
+                                        account.getAccountName(),
+                                        account.getAccountType().getTypeName(),
+                                        account.getBalance()
+                                    )).toList();
+        return ResponseEntity.ok(accountDTOs);        
     }
 }

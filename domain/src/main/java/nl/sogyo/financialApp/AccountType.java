@@ -1,9 +1,9 @@
 package nl.sogyo.financialApp;
 
 public enum AccountType {
-    GENERAL("GeneralAccount", GeneralAccount.class),
-    SAVINGS("SavingsAccount", SavingsAccount.class),
-    INVESTMENTS("InvestmentsAccount", InvestmentsAccount.class);
+    GENERAL("General", GeneralAccount.class),
+    SAVINGS("Savings", SavingsAccount.class),
+    INVESTMENTS("Investments", InvestmentsAccount.class);
 
     private final String typeName;
     private final Class<? extends Account> accountClass;

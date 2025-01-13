@@ -1,6 +1,6 @@
 package nl.sogyo.financialApp.controller.DTO;
 
-public class UserDTO implements IUserDTO {
+public class UserDTO {
 
     private String firstName;
     private String lastName;
@@ -12,47 +12,43 @@ public class UserDTO implements IUserDTO {
     private String country;
     private String password;
 
-	@Override
 	public String getFirstName() {
         return firstName;
 	}
 
-	@Override
 	public String getLastName() {
         return lastName;
 	}
 
-	@Override
 	public String getEmailUser() {
         return email;
 	}
 
-	@Override
+	
 	public String getStreetName() {
         return streetName;
 	}
 
-	@Override
+	
 	public String getZipCode() {
         return zipCode;
 	}
 
-	@Override
+	
 	public String getHouseNumber() {
         return houseNumber;
 	}
 
-	@Override
+
 	public String getCity() {
         return city;
 	}
 
-	@Override
+	
 	public String getCountry() {
         return country;
 	}
 
-	@Override
 	public String getPassword() {
         return password;
 	}
@@ -92,9 +88,4 @@ public class UserDTO implements IUserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-
-
-
-    
 }
