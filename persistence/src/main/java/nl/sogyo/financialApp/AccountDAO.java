@@ -50,14 +50,12 @@ public class AccountDAO implements IAccountDAO{
         }
 	}
 
+    // TODO: Implement this
 	@Override
 	public void delete(Account account) {
         try (Connection connection = DatabaseConnection.getConnection()) {
            PreparedStatement stmt = connection.prepareStatement(deleteAccountWithId);
-            
-
             stmt.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,7 +71,6 @@ public class AccountDAO implements IAccountDAO{
             stmt.setDouble(3, account.getBalance());
             stmt.setInt(4, accountId);
             stmt.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -84,7 +81,7 @@ public class AccountDAO implements IAccountDAO{
 	public List<Account> getAllAccountWithUserId(int id) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findAccountsByUserId);
-
+            stmt.setInt(1, id);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 List<Account> accounts = new ArrayList<Account>();
                 while (resultSet.next()){
@@ -93,13 +90,13 @@ public class AccountDAO implements IAccountDAO{
                 }
             return accounts;
             } catch (Exception e) {
-                // TODO: handle exception
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-		throw new UnsupportedOperationException("Unimplemented method 'getAllAccountWithUserId'");
+        return null;
 	}
 
 	@Override
@@ -134,6 +131,7 @@ public class AccountDAO implements IAccountDAO{
             } else if (accountType == AccountType.INVESTMENTS){
                 return new InvestmentsAccount(account_name, owner, balance);
             }
+            
         } catch (Exception e){
             e.printStackTrace();
         }

@@ -134,12 +134,12 @@ public class FinancialAppController{
         return ResponseEntity.ok().body("everything Okey");
     }
         
-    @GetMapping("get-accounts")
+    @GetMapping("/get-accounts")
     public ResponseEntity<String> getAccounts(){
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
         List<Account> accounts = accountDAO.getAllAccountWithUserId(userIdInt);
-        System.out.println(accounts);
+        // TODO: The accounts need to be mapped to a json string for the frontend to use.
         return ResponseEntity.ok().body("Accounts are called");        
     }
 }

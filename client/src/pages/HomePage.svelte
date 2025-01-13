@@ -1,7 +1,9 @@
 <script>
+    import GetAccounts from '../lib/GetAccounts.svelte';
     import AddTransaction from '../lib/AddTransaction.svelte';
     import AddAccount from '../lib/AddAccounts.svelte';
     import { push } from "svelte-spa-router";
+
     async function callHello(){
         let response = await fetch("/api/hello");
         let text = await response.text();
@@ -27,7 +29,7 @@
     }
 
     checkLoginStatus();
-
+    
 </script>
 
 <main>
@@ -37,6 +39,7 @@
         <p>Manage your accounts, incomes, and expenses easily.</p>
     </div>
 
+    <GetAccounts />
     <AddAccount />
     <AddTransaction />
     <button type="button" on:click={callHello}>Hello</button>
