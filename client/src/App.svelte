@@ -5,12 +5,14 @@
     import CreateAccount from "./pages/CreateAccount.svelte";
     import HomePage from "./pages/HomePage.svelte";
     import DevelopmentPage from "./pages/DevelopmentPage.svelte";
+    import AccuntDetails from "./pages/AccountDetails.svelte";
 
     const routes = {
         '/dev' : DevelopmentPage,
         '/' : LoginPage,
         '/CreateAccount' : CreateAccount,
-        '/home' : HomePage
+        '/home' : HomePage,
+        '/account-details' : AccuntDetails
     };
 
 

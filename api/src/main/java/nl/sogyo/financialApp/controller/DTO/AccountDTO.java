@@ -1,9 +1,11 @@
 package nl.sogyo.financialApp.controller.DTO;
 
 public class AccountDTO {
-    private String accountName;
+   private String accountName;
     private String accountType;
 	private double balance;
+
+    public AccountDTO(){}
 
     public AccountDTO(String accountName, String accountType, double balance){
         this.accountName = accountName;

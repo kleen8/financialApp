@@ -107,6 +107,8 @@ public class FinancialAppController{
             String userId = (String) session.getAttribute("userId");
             int userIdInt = Integer.parseInt(userId);
             User user = userDAO.getUserWithId(userIdInt);
+            System.out.println(user.toString());
+            System.out.println(accountDTO.toString());
             String account_type = accountDTO.getAccountType(); 
             String account_name = accountDTO.getAccountName(); 
             double balance = accountDTO.getBalance();
@@ -128,9 +130,9 @@ public class FinancialAppController{
             if (account != null){
                 System.out.println("Account made: " + account.getAccountType().getTypeName());
                 accountDAO.save(account, userIdInt);
-                //  AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
-                //                                      account.getAccountType().getTypeName(),
-                //                                      account.getBalance());
+                //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
+                //                                        account.getAccountType().getTypeName(),
+                //                                        account.getBalance());
                 System.out.println(accountDTO);
                 ResponseEntity.ok(accountDTO);
             }
@@ -138,10 +140,9 @@ public class FinancialAppController{
             e.printStackTrace();
             return ResponseEntity.noContent().build();
         }
-        System.out.println("hello");
         return ResponseEntity.noContent().build();
     }
-        
+
     @GetMapping("/get-accounts")
     public ResponseEntity<List<AccountDTO>> getAccounts(HttpSession session){
         String userId = (String) session.getAttribute("userId");

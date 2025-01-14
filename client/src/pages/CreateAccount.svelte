@@ -22,9 +22,10 @@
 
     async function  handleAccountCreation(event){
         event.preventDefault();
-        let user
+        let user;
         formData.subscribe(data => (user = data))();
 
+        console.log(JSON.stringify(user));
 
         if (isFormValid()){
             console.log("Form is valid");

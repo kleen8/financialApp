@@ -10,10 +10,10 @@ let accountName = ""
 
 const accountTypes = ["General", "Saving", "Investing"];
 
-const account = writable({
+const accountData = writable({
     accountName: "",
     accountType: "General",
-    balance: "0"
+    balance: 0.0
 });
 
 function resetForm() {
@@ -23,9 +23,13 @@ function resetForm() {
 }
 
 async function createAccount() {
-    if ($account.balance === "" || $account.accountName === ""){
+    if ($accountData.balance < 0 || $accountData.accountName === ""){
         alert("Please fill in the fields.");
     } else {
+        let account;
+        accountData.subscribe(data => (account = data));
+        console.log(JSON.stringify($accountData));
+        console.log(JSON.stringify(account));
         const response = await fetch("/api/create-account", {
             method: "POST",
             headers: {
@@ -33,14 +37,16 @@ async function createAccount() {
                 },
             body: JSON.stringify(account),
         });
-        console.log("call made");
         const newAccount = await response.text();
+        console.log(JSON.stringify(newAccount));
         accounts.update(currentAccounts => [...currentAccounts, newAccount]);
         showModal = false;
         resetForm();
     }
 }
+
 </script>
+
 <style>
 .modal {
     position: fixed;
@@ -117,7 +123,7 @@ async function createAccount() {
 
             <div class="form-group">
                 <label>Account Type
-                    <select bind:value={$account.accountType}>
+                    <select bind:value={$accountData.accountType}>
                         {#each accountTypes as type}
                             <option value={type}>{type}</option>
                         {/each}
@@ -129,7 +135,7 @@ async function createAccount() {
                 <label>Account Name
                     <input
                         type="text"
-                        bind:value={$account.accountName}
+                        bind:value={$accountData.accountName}
                         placeholder="Account name"
                         required
                     />
@@ -142,7 +148,7 @@ async function createAccount() {
                     <input
                         type="number"
                         step="0.01"
-                        bind:value={$account.balance}
+                        bind:value={$accountData.balance}
                         placeholder="Enter initial balance"
                         required
                     />
