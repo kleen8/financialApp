@@ -93,7 +93,7 @@ public class FinancialAppController{
     @GetMapping("/check-login")
     public ResponseEntity<String> checkLogin() {
         String userEmail = (String) session.getAttribute("userEmail");
-        if (userEmail != null){
+        if (userEmail != null && !userEmail.isBlank() && !userEmail.isEmpty()){
             return ResponseEntity.ok("User is logged in");
         } else {
             return ResponseEntity.status(401).body("Unauthorized");
