@@ -1,8 +1,8 @@
 # Dockerfile for Svelte application (Frontend)
-FROM node:18 as builder
+FROM node:22 as builder
 
 WORKDIR /app
-COPY client/package.json client/package-lock.json ./
+COPY client/package.json ./
 RUN npm install
 
 COPY client/ ./

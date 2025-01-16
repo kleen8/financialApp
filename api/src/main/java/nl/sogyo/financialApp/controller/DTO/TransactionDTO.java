@@ -1,0 +1,50 @@
+package nl.sogyo.financialApp.controller.DTO;
+
+public class TransactionDTO {
+
+    private String type;
+    private String amount;
+    private String catergory;
+    private Boolean recurrent;
+    private String timeInterval;
+    private String timestamp;
+
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getAmount() {
+		return amount;
+	}
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+	public String getCatergory() {
+		return catergory;
+	}
+	public void setCatergory(String catergory) {
+		this.catergory = catergory;
+	}
+	public Boolean getRecurrent() {
+		return recurrent;
+	}
+	public void setRecurrent(Boolean recurrent) {
+		this.recurrent = recurrent;
+	}
+	public String getTimeInterval() {
+		return timeInterval;
+	}
+	public void setTimeInterval(String timeInterval) {
+		this.timeInterval = timeInterval;
+	}
+	public String getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+
+
+}

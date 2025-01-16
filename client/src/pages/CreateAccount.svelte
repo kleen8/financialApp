@@ -1,40 +1,43 @@
 <script>
 
     import { push } from "svelte-spa-router";
+    import { writable } from "svelte/store";
     
-    let password = '';
-    let name = '';
-    let familyName = '';
-    let streetName = '';
-    let houseNumber = '';
-    let city = '';
-    let zipcode = '';
-    let email_user = '';
-    let country = '';
+    const formData = writable({
+        firstName: "",
+        lastName: "",
+        email: "",
+        streetName: "",
+        zipCode: "",
+        houseNumber: "",
+        city: "",
+        country: "",
+        password: "",
+    });
 
     let showRequirements = false;
     let showPassword = false;
     let isEmailValid = true;
     let isPasswordValid = true
 
-    async function  handleAccountCreation(){
+    async function  handleAccountCreation(event){
+        event.preventDefault();
+        let user;
+        formData.subscribe(data => (user = data))();
+
+        console.log(JSON.stringify(user));
+
         if (isFormValid()){
             console.log("Form is valid");
-            const user = userToJson();
-
             try {
-
-                const response = await fetch("/api/createUser", {
+                const response = await fetch("/api/create-user", {
                     method : "POST",
                     headers : {
                         "Content-Type" : "application/json",
                     },
                     body: JSON.stringify(user),
                 });
-                
                 const message = await response.text();
-
-
                 if(!response.ok) {
                     alert(message);
                     return;
@@ -48,22 +51,6 @@
             alert("Correct the login form");
         }
     }
-
-    function userToJson(){
-        let user = {
-            "firstName" : name,
-            "familyName" : familyName,
-            "streetName" : streetName,
-            "houseNumber" : houseNumber,
-            "city" : city,
-            "zipCode" : zipcode,
-            "emailUser" : email_user,
-            "country" : country,
-            "password" : password
-        }
-        return user;
-    }
-
 
     function togglePasswordRequirements() {
         showRequirements = true;
@@ -80,7 +67,7 @@
     // Validate the email input and update the border color if invalid
     function validateEmail() {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(email_user)) {
+        if (!emailRegex.test($formData.email)) {
             isEmailValid = false;
         } else {
             isEmailValid = true;
@@ -90,7 +77,7 @@
     // Validate the password input
     function validatePassword() {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-        if (!passwordRegex.test(password)) {
+        if (!passwordRegex.test($formData.password)) {
             isPasswordValid = false;
         } else {
             isPasswordValid = true;
@@ -102,7 +89,7 @@
         hidePasswordRequirements();
     }
 
-    function isStringEmpty(input){
+    function isStringNotEmpty(input){
         if (input == ""){
             return false;
         } else {
@@ -112,7 +99,10 @@
 
     // Check if all form fields are valid and filled
     function isFormValid() {
-        return isStringEmpty(name) && isStringEmpty(familyName);
+        return isStringNotEmpty($formData.firstName) &&
+                isStringNotEmpty($formData.lastName) &&
+                isStringNotEmpty($formData.email) &&
+                isStringNotEmpty($formData.country);
     }
 </script>
 
@@ -121,7 +111,7 @@
     <form on:submit|preventDefault={handleAccountCreation} class="account-creation">
         <input type="email" 
         placeholder="Email" 
-        bind:value={email_user}
+        bind:value={$formData.email}
         on:blur={validateEmail}
         class:invalid={!isEmailValid}
         required
@@ -132,7 +122,7 @@
                 <input id="password_field"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
-                bind:value={password}
+                bind:value={$formData.password}
                 on:focus={togglePasswordRequirements}
                 on:blur={passwordBlur}
                 class:invalid={!isPasswordValid}
@@ -155,13 +145,13 @@
               </div>
             {/if}
           </div>
-        <input type="text" placeholder="Name" bind:value={name} required/>
-        <input type="text" placeholder="Family name" bind:value={familyName} required/>
-        <input type="text" placeholder="Country" bind:value={country} required/>
-        <input type="text" placeholder="City" bind:value={city} required/>
-        <input type="text" placeholder="Street name" bind:value={streetName} required/>
-        <input type="text" placeholder="House number" bind:value={houseNumber} required/>
-        <input type="text" placeholder="Zipcode" bind:value={zipcode} required/>
+        <input type="text" placeholder="Name" bind:value={$formData.firstName} required/>
+        <input type="text" placeholder="Family name" bind:value={$formData.lastName} required/>
+        <input type="text" placeholder="Country" bind:value={$formData.country} required/>
+        <input type="text" placeholder="City" bind:value={$formData.city} required/>
+        <input type="text" placeholder="Street name" bind:value={$formData.streetName} required/>
+        <input type="text" placeholder="House number" bind:value={$formData.houseNumber} required/>
+        <input type="text" placeholder="Zipcode" bind:value={$formData.zipCode} required/>
         <button type="submit" 
             disabled={!isFormValid()}
             >Create Account</button>

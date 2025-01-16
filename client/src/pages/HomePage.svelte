@@ -1,33 +1,34 @@
 <script>
-    import { push } from "svelte-spa-router";
-    async function callHello(){
-        let response = await fetch("/api/hello");
-        let text = await response.text();
-        console.log("api call without env: " ,text);
-    }
+    import GetAccounts from '../lib/GetAccounts.svelte';
+    import AddAccount from '../lib/AddAccounts.svelte';
+    import { checkLoginStatus, isAuthenticated } from "../stores/stores";
+    import { onMount } from 'svelte';
+    import { push } from 'svelte-spa-router';
 
-    async function checkLoginStatus(){
-        try {
-            const response = await fetch('/api/check-login', {
-                method : 'GET',
-                credentials : 'include'
-                });
-            if (response.ok) {
-                console.log('User is logged in');
-            } else {
-                console.log('User is not logged in');
-                push('/');
+   onMount(async () => {
+        let isLoggedIn = await checkLoginStatus();
+        console.log("on mount logincheck for home page: " + isLoggedIn);
+        isAuthenticated.subscribe((val) => {
+            let value = val;
+            console.log("isAuthenticated value: " + value);
+            if (!val){
+                push("/");
             }
-        } catch (error) {
-            console.error('Error checking login status: ', error);
-            push('/');
-        }
-    }
-
-    checkLoginStatus();
-
+            });
+    });
+    
 </script>
 
 <main>
-    <button type="button" on:click={callHello}>Hello</button>
+    
+    <div id="header">
+        <h1>Welcome to Your Financial App</h1>
+        <p>Manage your accounts, incomes, and expenses easily.</p>
+    </div>
+
+    <GetAccounts />
+    <AddAccount />
 </main>
+
+<style>
+</style>

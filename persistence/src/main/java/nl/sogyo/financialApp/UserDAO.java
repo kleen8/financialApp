@@ -13,9 +13,12 @@ import com.password4j.Password;
 import nl.sogyo.financialApp.exception.UserNotFoundException;
 import nl.sogyo.financialApp.exception.AuthenticationException;
 
-public class UserDao implements IUserDAO{
+import org.springframework.stereotype.Repository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
+@Repository
+public class UserDAO implements IUserDAO{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
 
 
     private final String saveUserQuery = """
@@ -67,7 +70,6 @@ public class UserDao implements IUserDAO{
             stmt.setString(8, user.getCountry());
             stmt.setString(9, passwordHash);
             stmt.executeUpdate();
-            connection.close();
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
@@ -76,7 +78,7 @@ public class UserDao implements IUserDAO{
 
     // because then the frontend needs to get notified
 	@Override
-    public User findById(int id){
+    public User getUserWithId(int id){
         try (Connection connection = DatabaseConnection.getConnection()){
             PreparedStatement stmt = connection.prepareStatement(findUserById);
             stmt.setInt(1, id);
@@ -96,7 +98,7 @@ public class UserDao implements IUserDAO{
 
     // because then the frontend needs to get notified
     @Override
-    public User findByEmail(String email){
+    public User getUserWithEmail(String email){
         try {
             Connection connection = DatabaseConnection.getConnection();
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
@@ -114,7 +116,7 @@ public class UserDao implements IUserDAO{
         }
     }
 
-
+    @Override
     public boolean doesUserExist(String email){
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);
@@ -127,7 +129,8 @@ public class UserDao implements IUserDAO{
             return false;
         }
     }
-
+    
+    @Override
     public HashMap<String, String> loginUser(String email, String password) {
         HashMap<String, String> sessionCredentials = new HashMap<String, String>(); 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -166,11 +169,11 @@ public class UserDao implements IUserDAO{
                 User user = mapToUser(resultSet);
                 users.add(user);
             }
+            return users;
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
-        return users;
     }
 
     @Override
@@ -232,7 +235,8 @@ public class UserDao implements IUserDAO{
         }
         return null;
     }
-
+    
+    @Override
     public int getUserIdByEmail(String email) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findUserByEmail);

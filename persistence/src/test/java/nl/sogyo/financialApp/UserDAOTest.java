@@ -6,12 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class UserDAOTest {
     
     @Test
     public void testPasswordHash(){
-        UserDao user = new UserDao();
+        UserDAO user = new UserDAO();
         String password = "hello";
         String hashedPassword = user.hashPassword(password);
 
@@ -20,7 +19,7 @@ public class UserDAOTest {
     
     @Test
     public void testPasswordCheck(){
-        UserDao user = new UserDao();
+        UserDAO user = new UserDAO();
         String password = "hello";
         String hashedPassword = user.hashPassword(password);
         
@@ -29,7 +28,7 @@ public class UserDAOTest {
 
     @Test
     public void testPasswordFailure(){
-        UserDao user = new UserDao();
+        UserDAO user = new UserDAO();
         String password = "hello";
         String hashedPassword = user.hashPassword(password);
         assertFalse(user.isPasswordCorrect(hashedPassword, "no"));

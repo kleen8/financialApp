@@ -12,7 +12,7 @@
             "password" : password
           }
           try {
-              const response = await fetch("/api/loginUser", {
+              const response = await fetch("/api/login-user", {
                   method : "POST",
                   headers : {
                       "Content-Type" : "application/json",

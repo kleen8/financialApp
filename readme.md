@@ -63,3 +63,30 @@ CREATE TABLE users (
 );
 
 
+
+CREATE TABLE accounts (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    account_type VARCHAR(50) NOT NULL,
+    account_name VARCHAR(255) NOT NULL,
+    balance NUMERIC(15, 2) DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+
+CREATE TYPE time_interval_enum AS ENUM ('daily', 'weekly', 'monthly', 'yearly');
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    type TEXT NOT NULL,
+    amount NUMERIC(15, 2) NOT NULL,
+    category TEXT NOT NULL,
+    recurrent BOOLEAN NOT NULL DEFAULT FALSE,
+    time_interval time_interval_enum DEFAULT NULL,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    account_id INTEGER NOT NULL,
+    CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
+);
