@@ -116,7 +116,7 @@ public class AccountDAO implements IAccountDAO{
 	}
 
     private Account mapToAccount(ResultSet resultSet){
-        UserDao userDao = new UserDao();
+        UserDAO userDao = new UserDAO();
         try {
             int userId = resultSet.getInt("user_id");
             User owner = userDao.getUserWithId(userId);

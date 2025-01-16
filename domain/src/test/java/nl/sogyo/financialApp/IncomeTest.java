@@ -99,7 +99,7 @@ public class IncomeTest {
 
         assertEquals(500, income.getAmount(), 0.01);
         assertEquals("Investment Return", income.getCategory());
-        assertTrue(income.getRecurrent());
+        assertTrue(income.isRecurrent());
         assertEquals(ChronoUnit.MONTHS, income.getTimeInterval());
         assertEquals(customTimestamp, income.getTimestamp());
     }

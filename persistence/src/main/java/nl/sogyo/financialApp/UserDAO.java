@@ -16,9 +16,9 @@ import nl.sogyo.financialApp.exception.AuthenticationException;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserDao implements IUserDAO{
+public class UserDAO implements IUserDAO{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
 
 
     private final String saveUserQuery = """

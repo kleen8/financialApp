@@ -7,7 +7,7 @@
     let timeInterval = "Weekly";
     let timestamp = new Date().toISOString().slice(0,16);
 
-    const timeIntervals = ["Dayly","Weekly" , "Monthly" , "Yearly" ];
+    const timeIntervals = ["Daily","Weekly" , "Monthly" , "Yearly" ];
 
     let transaction = {
         type : transactionType,
@@ -26,13 +26,21 @@
         timestamp = new Date().toISOString().slice(0,16);
     }
 
-    function addTransaction() {
+    async function addTransaction() {
         if (!amount || isNaN(amount) || amount <= 0){
             alert("Please enter a valid amount.");
             return;
         }
         console.log("transaction added:", transaction);
         showModal = false;
+        const response = await fetch("/api/post-transaction", {
+            method : "POST", 
+            headers : {
+                "Content-Type" : "application/json",
+            },
+            body : JSON.stringify(transaction),
+        });
+        console.log(response.body);
         resetForm();
     }
     

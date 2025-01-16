@@ -71,7 +71,7 @@ function handleButtonClick(account) {
 </style>
 
 {#if error}
-    <p class="error">{error}</p>
+    <p class="error">No accounts found. Create a new one!</p>
 {:else if accountsList.length === 0}
     <p class="error">No accounts found. Create a new one!</p>
 {:else}

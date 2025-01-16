@@ -8,7 +8,8 @@ public class GeneralAccount extends Account{
 
     protected List<Expense> expenses = new ArrayList<Expense>();
     protected List<Income> incomes = new ArrayList<Income>();
-
+    protected List<Transaction> transactions = new ArrayList<Transaction>();
+    
     public GeneralAccount(String accountName, User owner, double balance){
             super(accountName, owner, balance);
     }
@@ -23,40 +24,32 @@ public class GeneralAccount extends Account{
         withdraw(expense.getAmount());
     }
 
-    private boolean shouldProcessTransaction(Expense expense, LocalDateTime now){
-        return expense.getTimestamp().plus(1, expense.getTimeInterval()).isBefore(now) ||
-               expense.getTimestamp().plus(1, expense.getTimeInterval()).isEqual(now);
-    }
-
-    private boolean shouldProcessTransaction(Income income, LocalDateTime now){
-        return income.getTimestamp().plus(1, income.getTimeInterval()).isBefore(now) ||
-               income.getTimestamp().plus(1, income.getTimeInterval()).isEqual(now);
+    private boolean shouldProcessTransaction(Transaction transaction, LocalDateTime now){
+        return transaction.getTimestamp().plus(1, transaction.getTimeInterval()).isBefore(now) ||
+               transaction.getTimestamp().plus(1, transaction.getTimeInterval()).isEqual(now);
     }
 
     public void processRecurrentTransactions(){
         LocalDateTime now = LocalDateTime.now();
-        for (Income income : incomes) {
-            if (income.isRecurrent() && shouldProcessTransaction(income, now)){
-                deposit(income.getAmount());
-                income.setTimestamp(now);
+        for (Transaction transaction : transactions){
+            if (transaction instanceof Income &&
+                transaction.isRecurrent() && 
+                shouldProcessTransaction(transaction, now)){
+                deposit(transaction.getAmount());
+                transaction.setTimestamp(now);
+                System.out.println("deposit now balance after: " + getBalance());
+            } else if (transaction instanceof Expense &&
+                transaction.isRecurrent() && 
+                shouldProcessTransaction(transaction, now)){
+                withdraw(transaction.getAmount());
+                transaction.setTimestamp(now);
                 System.out.println("deposit now balance after: " + getBalance());
             }
         }
-        for (Expense expense : expenses){
-            if (expense.isRecurrent() && shouldProcessTransaction(expense, now)){
-                withdraw(expense.getAmount());
-                expense.setTimestamp(now);
-                System.out.println("withdraw now balance after: " + getBalance());
-            }
-        }
     }
 
-    public List<Expense> getExpenses(){
-        return expenses;
-    }
-
-    public List<Income> getIncomes() {
-        return incomes;
+    public List<Transaction> getTransactions(){
+        return transactions;
     }
 
 	@Override

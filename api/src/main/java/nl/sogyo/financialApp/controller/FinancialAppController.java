@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpSession;
 
 import nl.sogyo.financialApp.*;
 import nl.sogyo.financialApp.controller.DTO.AccountDTO;
+import nl.sogyo.financialApp.controller.DTO.TransactionDTO;
 import nl.sogyo.financialApp.controller.DTO.UserDTO;
 
 @RestController
@@ -107,13 +108,10 @@ public class FinancialAppController{
             String userId = (String) session.getAttribute("userId");
             int userIdInt = Integer.parseInt(userId);
             User user = userDAO.getUserWithId(userIdInt);
-            System.out.println(user.toString());
-            System.out.println(accountDTO.toString());
             String account_type = accountDTO.getAccountType(); 
             String account_name = accountDTO.getAccountName(); 
             double balance = accountDTO.getBalance();
             Account account = null;
-            System.out.println(account_type);
             switch (account_type) {
                 case "General":
                 account = new GeneralAccount(account_name, user, balance);
@@ -128,7 +126,6 @@ public class FinancialAppController{
                 break;
             }
             if (account != null){
-                System.out.println("Account made: " + account.getAccountType().getTypeName());
                 accountDAO.save(account, userIdInt);
                 //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
                 //                                        account.getAccountType().getTypeName(),
@@ -158,5 +155,15 @@ public class FinancialAppController{
                                         account.getBalance()
                                     )).toList();
         return ResponseEntity.ok(accountDTOs);        
+    }
+
+
+    @PostMapping("/post-transaction")
+    public ResponseEntity<String> postTransaction(@RequestBody TransactionDTO transactionDTO){
+        System.out.println(transactionDTO.getCatergory());
+        System.out.println(transactionDTO.getTimeInterval());
+        System.out.println(transactionDTO.getRecurrent());
+        return ResponseEntity.ok().body("TransactionDTO works");
+
     }
 }
