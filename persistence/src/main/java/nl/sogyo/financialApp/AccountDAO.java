@@ -36,6 +36,7 @@ public class AccountDAO implements IAccountDAO{
     WHERE account_id = ?;
     """;
 
+
 	@Override
 	public void save(Account account, int userId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -50,7 +51,6 @@ public class AccountDAO implements IAccountDAO{
         }
 	}
 
-    // TODO: Implement this
 	@Override
 	public void delete(Account account) {
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -111,7 +111,6 @@ public class AccountDAO implements IAccountDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // TODO: Return exeptionm instead of null but for now it'll work
         return null;
 	}
 
@@ -135,9 +134,19 @@ public class AccountDAO implements IAccountDAO{
         } catch (Exception e){
             e.printStackTrace();
         }
-        // TODO: Return exeptionm instead of null but for now it'll work
         return null;
     }
 
+    private AccountDTO mapToAccountDto(ResultSet resultSet){
+        try {
+            String account_name = resultSet.getString("account_name");
+            String account_type = resultSet.getString("account_type");
+            double balance = resultSet.getDouble("balance");
+            int accountId = resultSet.getInt("id");
+            return new AccountDAO(account_name, account_type, balance, accountId);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

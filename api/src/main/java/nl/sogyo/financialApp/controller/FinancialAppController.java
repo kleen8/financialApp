@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
 import nl.sogyo.financialApp.*;
-import nl.sogyo.financialApp.controller.DTO.AccountDTO;
-import nl.sogyo.financialApp.controller.DTO.TransactionDTO;
-import nl.sogyo.financialApp.controller.DTO.UserDTO;
 
 @RestController
 @RequestMapping("/api")

@@ -1,4 +1,4 @@
-package nl.sogyo.financialApp.controller.DTO;
+package nl.sogyo.financialApp;
 
 public class TransactionDTO {
 
