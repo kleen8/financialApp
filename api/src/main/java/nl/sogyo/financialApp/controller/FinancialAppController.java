@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
@@ -141,17 +142,22 @@ public class FinancialAppController{
     public ResponseEntity<List<AccountDTO>> getAccounts(HttpSession session){
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
-        List<Account> accounts = accountDAO.getAllAccountWithUserId(userIdInt);
-        if (accounts == null || accounts.isEmpty()){
+        List<AccountDTO> accountsDTO = accountDAO.getAccountDTOsWithUserId(userIdInt);
+        if (accountsDTO == null || accountsDTO.isEmpty()){
             return ResponseEntity.noContent().build();
         }
-        List<AccountDTO> accountDTOs = accounts.stream()
-                                    .map(account -> new AccountDTO(
-                                        account.getAccountName(),
-                                        account.getAccountType().getTypeName(),
-                                        account.getBalance()
-                                    )).toList();
-        return ResponseEntity.ok(accountDTOs);        
+        return ResponseEntity.ok(accountsDTO);        
+    }
+
+    @PostMapping("/post-account-credentials")
+    public ResponseEntity<String> postAccountCred(@RequestBody AccountDTO accountDTO){
+        System.out.println(accountDTO.getAccountId());
+        System.out.println(accountDTO.getAccountName());
+        System.out.println(accountDTO.getAccountType());
+        session.setAttribute("accoundId", accountDTO.getAccountId());
+        session.setAttribute("accountName", accountDTO.getAccountName());
+        session.setAttribute("accountType", accountDTO.getAccountType());
+        return ResponseEntity.ok().body("ok");
     }
 
 
@@ -160,6 +166,7 @@ public class FinancialAppController{
         System.out.println(transactionDTO.getCatergory());
         System.out.println(transactionDTO.getTimeInterval());
         System.out.println(transactionDTO.getRecurrent());
+        
         return ResponseEntity.ok().body("TransactionDTO works");
 
     }

@@ -31,16 +31,22 @@ triggerFetchAccounts.subscribe(($triggerFetchAccounts) => {
 
 onMount(fetchAccounts);
 
-function handleButtonClick(account) {
-    // TODO : go to selected account, so push the user to a new page with the account details
+async function handleButtonClick(account) {
+    console.log(account);
     const queryParams = new URLSearchParams({
         name: account.accountName,
         type: account.accountType,
     }).toString();
-    console.log(queryParams);
-    console.log("Constructed URL:", `/account-details?${queryParams}`);
-    console.log("Go to account: " + account.accountName);
-    push('/account-details?' + queryParams);
+    const response = await fetch('/api/post-account-credentials', {
+            method: "POST",
+            headers: {
+                "Content-Type" : "application/json",
+                },
+                body: JSON.stringify(account),
+    });
+    if (response.ok){
+        push('/account-details?' + queryParams);
+    }
 }
 
 

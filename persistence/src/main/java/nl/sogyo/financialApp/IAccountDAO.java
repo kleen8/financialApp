@@ -7,5 +7,6 @@ public interface IAccountDAO {
     void delete(Account account);
     void update(Account account, int accountId);
     List<Account> getAllAccountWithUserId(int id);
+    List<AccountDTO> getAccountDTOsWithUserId(int userId);
     Account getAccountWithId(int id);
 }

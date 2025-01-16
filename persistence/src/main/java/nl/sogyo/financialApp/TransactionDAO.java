@@ -2,7 +2,9 @@ package nl.sogyo.financialApp;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aspectj.weaver.ast.Instanceof;
@@ -18,19 +20,23 @@ public class TransactionDAO implements ITransactionDAO{
     VALUES (?, ?, ?, ?, ?, ?, ?);
     """;
 
+    private static final String getAllTransactionsWithAccIdQry = """
+    SELECT * FROM transactions WHERE account_id = ?;
+    """;
+
 	@Override
-	public void save(Transaction transaction, int accountId) {
+	public void save(TransactionDTO transactionDTO) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(saveTransactionQry);
             String type = transaction instanceof Expense ? "expense" : "income";
             String timeInterval = transaction.getTimeInterval() != null ? transaction.getTimeInterval().name().toLowerCase() : null;
-            stmt.setString(1, type);
-            stmt.setDouble(2, transaction.getAmount());
-            stmt.setString(3, transaction.getCategory());
-            stmt.setBoolean(4, transaction.isRecurrent());
-            stmt.setString(5, timeInterval);
-            stmt.setTimestamp(6, Timestamp.valueOf(transaction.getTimestamp()));
-            stmt.setInt(7, accountId);
+            stmt.setString(1, transactionDTO.getType());
+            stmt.setDouble(2, Double.parseDouble(transactionDTO.getAmount()));
+            stmt.setString(3, transactionDTO.getCatergory());
+            stmt.setBoolean(4, transactionDTO.getRecurrent());
+            stmt.setString(5, transactionDTO.getTimeInterval());
+            stmt.setTimestamp(6, Timestamp.valueOf(transactionDTO.getTimestamp()));
+            stmt.setInt(7, transactionDTO.get);
             stmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,15 +45,45 @@ public class TransactionDAO implements ITransactionDAO{
 	}
 
 	@Override
-	public Transaction getTransactionWitId(int transactionId) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getTransactionWitId'");
+    public List<TransactionDTO> getAllTransactionWitAccId(int accountId) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(getAllTransactionsWithAccIdQry);
+            stmt.setInt(1, accountId);
+            try (ResultSet resultSet = stmt.executeQuery()){
+                List<TransactionDTO> transactionDTOs = new ArrayList<TransactionDTO>();
+                while (resultSet.next()){
+                    TransactionDTO transactionDTO = mapToTransactionDTO(resultSet);
+                    transactionDTOs.add(transactionDTO);
+                }
+                return transactionDTOs;
+            } 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 	}
 
-	@Override
-	public List<Transaction> getAllTransactionWitId(int accountId) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getAllTransactionWitId'");
+	private TransactionDTO mapToTransactionDTO(ResultSet resultSet) {
+        try {
+            TransactionDTO transactionDTO = new TransactionDTO();
+            String type = resultSet.getString("type");
+            double amount = resultSet.getDouble("amount");
+            String category = resultSet.getString("category");
+            Boolean recurrent = resultSet.getBoolean("recurrent");
+            String timeInterval = resultSet.getString("timeInterval");
+            String timestamp = resultSet.getString("timestamp");
+            transactionDTO.setType(type);
+            transactionDTO.setAmount(Double.toString(amount));
+            transactionDTO.setCatergory(category);
+            transactionDTO.setRecurrent(recurrent);
+            transactionDTO.setTimeInterval(timeInterval);
+            transactionDTO.setTimestamp(timestamp);
+            return transactionDTO;
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return null;
 	}
 
 	@Override
@@ -62,5 +98,15 @@ public class TransactionDAO implements ITransactionDAO{
 		throw new UnsupportedOperationException("Unimplemented method 'deleteTransaction'");
 	}
 
-    
+    @Override
+    public Transaction getTransactionWitId(int transactionId){
+        return null;
+    }
+
+
+    @Override
+    public List<Transaction> getAllTransactionWitId(int accountId){
+        return null;
+    }
+
 }

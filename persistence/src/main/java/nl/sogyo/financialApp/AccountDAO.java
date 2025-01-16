@@ -113,6 +113,30 @@ public class AccountDAO implements IAccountDAO{
         }
         return null;
 	}
+    
+    @Override
+    public List<AccountDTO> getAccountDTOsWithUserId(int userId){
+            try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(findAccountsByUserId);
+            stmt.setInt(1, userId);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                List<AccountDTO> accountsDTOs = new ArrayList<AccountDTO>();
+                while (resultSet.next()){
+                    AccountDTO accountDto = mapToAccountDto(resultSet);
+                    accountsDTOs.add(accountDto);
+                }
+            return accountsDTOs;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+
+
+    }
 
     private Account mapToAccount(ResultSet resultSet){
         UserDAO userDao = new UserDAO();
@@ -143,10 +167,11 @@ public class AccountDAO implements IAccountDAO{
             String account_type = resultSet.getString("account_type");
             double balance = resultSet.getDouble("balance");
             int accountId = resultSet.getInt("id");
-            return new AccountDAO(account_name, account_type, balance, accountId);
+            return new AccountDTO(account_name, account_type, balance, accountId);
 
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 }

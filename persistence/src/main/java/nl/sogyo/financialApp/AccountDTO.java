@@ -8,6 +8,13 @@ public class AccountDTO {
 
     public AccountDTO(){}
 
+    public AccountDTO(String accountName, String accountType, double balance, int accountId){
+        this.accountName = accountName;
+        this.accountType = accountType;
+        this.balance = balance;
+        this.accountId = accountId;
+    }
+
     public AccountDTO(String accountName, String accountType, double balance){
         this.accountName = accountName;
         this.accountType = accountType;

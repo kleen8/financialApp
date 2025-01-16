@@ -1,7 +1,7 @@
 package nl.sogyo.financialApp;
 
 public class TransactionDTO {
-
+    private int accountId;
     private String type;
     private String amount;
     private String catergory;
