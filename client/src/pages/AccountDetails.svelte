@@ -16,6 +16,7 @@ onMount(async () => {
         }
     });
     const queryParams = new URLSearchParams(window.location.search);
+    console.log(queryParams);
     accountName = queryParams.get('name');
     accountType = queryParams.get('type');
 });

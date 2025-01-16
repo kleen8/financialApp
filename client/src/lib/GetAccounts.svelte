@@ -1,7 +1,8 @@
 <script>
 import { onMount } from 'svelte';
-import { accounts }  from '../stores/stores.js';
-    import { push } from 'svelte-spa-router';
+import { accounts, triggerFetchAccounts }  from '../stores/stores.js';
+import { push } from 'svelte-spa-router';
+
 let accountsList = [];
 let error = null;
 const fetchAccounts = async () => {
@@ -19,8 +20,16 @@ const fetchAccounts = async () => {
         console.error(err);
     }
 };
-onMount(fetchAccounts);
 
+triggerFetchAccounts.subscribe(($triggerFetchAccounts) => {
+    if($triggerFetchAccounts) {
+        console.log("Triggerd by store");
+        fetchAccounts();
+        triggerFetchAccounts.set(false);
+        }
+});
+
+onMount(fetchAccounts);
 
 function handleButtonClick(account) {
     // TODO : go to selected account, so push the user to a new page with the account details

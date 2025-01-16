@@ -1,6 +1,6 @@
 <script>
 
-import { accounts } from "../stores/stores.js";
+import { accounts, triggerFetchAccounts } from "../stores/stores.js";
 import { writable } from "svelte/store";
 
 let showModal = false;
@@ -40,6 +40,7 @@ async function createAccount() {
         const newAccount = await response.text();
         console.log(JSON.stringify(newAccount));
         accounts.update(currentAccounts => [...currentAccounts, newAccount]);
+        triggerFetchAccounts.set(true);
         showModal = false;
         resetForm();
     }

@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 
 export const accounts = writable([]);
 export const isAuthenticated = writable(false);
+export const triggerFetchAccounts = writable(false);
 
 export async function checkLoginStatus() {
     try {
