@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+client/node_modules
+client/package-lock.json
+api/node_modules
+api/package-lock.json
+logs
+*.log
+.git
+.gitignore
+.env
+

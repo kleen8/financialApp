@@ -10,8 +10,6 @@ export async function checkLoginStatus() {
             credentials: 'include',
         });
         isAuthenticated.set(response.ok);
-        console.log(response.ok);
-        console.log('Login response:', response.status);
         return response.ok;
     } catch (err) {
         isAuthenticated.set(false);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-
+    
     protected String firstName;
     protected String lastName;
     protected String email;
@@ -13,7 +13,7 @@ public class User {
     protected String houseNumber;
     protected String city;
     protected String country;
-    
+      
     protected List<Account> accounts = new ArrayList<Account>();
 
     private User(String firstName, String lastName,
@@ -42,7 +42,7 @@ public class User {
         houseNumber = sanitize(houseNumber);
         city = sanitizeAndDecapitalize(city);
         country = sanitizeAndDecapitalize(country);
-
+        
         // Validate inputs
         if (!isValidName(firstName) || !isValidName(lastName) || !isValidEmail(email) ||
             !isValidAddressField(streetName) || !isValidZipCode(zipCode) || 

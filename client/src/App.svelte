@@ -20,26 +20,10 @@
 
     onMount(async () => {
         isLoggedIn = await checkLoginStatus();
-        console.log(isLoggedIn);
-        if (!isLoggedIn){
-            push('/');
-        }
+        console.log("On mount login check");
     });
-
-     // Protect routes
-    function routeGuard(route) {
-        console.log('Routing to: ' , route);
-        if (route === '/home' || route === '/account-details') {
-            if (isLoggedIn) {
-                push('/'); // Redirect to the login page if not authenticated
-                return false;
-            }
-        }
-        return true;
-    }
-
 </script>
 
 <main>
-    <Router { routes } { routeGuard } />
+    <Router { routes } />
 </main>
