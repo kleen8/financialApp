@@ -2,7 +2,7 @@ package nl.sogyo.financialApp;
 
 public class TransactionDTO {
     private int accountId;
-    private String type;
+	private String type;
     private String amount;
     private String catergory;
     private Boolean recurrent;
@@ -46,5 +46,11 @@ public class TransactionDTO {
 		this.timestamp = timestamp;
 	}
 
+    public int getAccountId() {
+        return accountId;
+    }
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
+    }
 
 }

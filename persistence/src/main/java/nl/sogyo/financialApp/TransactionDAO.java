@@ -4,11 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aspectj.weaver.ast.Instanceof;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class TransactionDAO implements ITransactionDAO{
     
     /* Database table: 
@@ -16,7 +19,7 @@ public class TransactionDAO implements ITransactionDAO{
      */
 
     private static final String saveTransactionQry = """
-    INSERT INTO transaction ( type, amount, category, recurrent, time_interval, timestamp, account_id) 
+    INSERT INTO transactions ( type, amount, category, recurrent, time_interval, timestamp, account_id) 
     VALUES (?, ?, ?, ?, ?, ?, ?);
     """;
 
@@ -26,22 +29,22 @@ public class TransactionDAO implements ITransactionDAO{
 
 	@Override
 	public void save(TransactionDTO transactionDTO) {
+        System.out.println("Trying to save a transaction, in the DAO");
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(saveTransactionQry);
-            String type = transaction instanceof Expense ? "expense" : "income";
-            String timeInterval = transaction.getTimeInterval() != null ? transaction.getTimeInterval().name().toLowerCase() : null;
             stmt.setString(1, transactionDTO.getType());
             stmt.setDouble(2, Double.parseDouble(transactionDTO.getAmount()));
             stmt.setString(3, transactionDTO.getCatergory());
             stmt.setBoolean(4, transactionDTO.getRecurrent());
             stmt.setString(5, transactionDTO.getTimeInterval());
-            stmt.setTimestamp(6, Timestamp.valueOf(transactionDTO.getTimestamp()));
-            stmt.setInt(7, transactionDTO.get);
+            System.out.println(transactionDTO.getTimestamp());
+            stmt.setTimestamp(6,transformISOtoLocalDateTime(transactionDTO.getTimestamp()));
+            stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
+            System.out.println("Transaction saved in DAO");
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 	}
 
 	@Override
@@ -109,4 +112,12 @@ public class TransactionDAO implements ITransactionDAO{
         return null;
     }
 
+    private Timestamp transformISOtoLocalDateTime(String isoTimeString){
+        // Parse ISO 8601 to LocalDateTime
+        DateTimeFormatter isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        LocalDateTime localDateTime = LocalDateTime.parse(isoTimeString, isoFormatter);
+        // Convert LocalDateTime to Timestamp
+        Timestamp sqlTimestamp = Timestamp.valueOf(localDateTime);
+        return sqlTimestamp;
+    }
 }
