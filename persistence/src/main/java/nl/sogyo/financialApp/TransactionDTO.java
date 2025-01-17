@@ -4,7 +4,7 @@ public class TransactionDTO {
     private int accountId;
 	private String type;
     private String amount;
-    private String catergory;
+    private String category;
     private Boolean recurrent;
     private String timeInterval;
     private String timestamp;
@@ -21,11 +21,11 @@ public class TransactionDTO {
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	public String getCatergory() {
-		return catergory;
+	public String getCategory() {
+		return category;
 	}
-	public void setCatergory(String catergory) {
-		this.catergory = catergory;
+	public void setCategory(String catergory) {
+		this.category = catergory;
 	}
 	public Boolean getRecurrent() {
 		return recurrent;

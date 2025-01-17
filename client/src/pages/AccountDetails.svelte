@@ -1,6 +1,7 @@
 <script>
 import { onMount } from 'svelte';
 import AddTransaction from '../lib/AddTransaction.svelte';
+import GetTransaction from '../lib/GetTransaction.svelte';
 import { push } from 'svelte-spa-router';
 import { checkLoginStatus, isAuthenticated } from "../stores/stores";
 let accountName = '';
@@ -26,7 +27,7 @@ onMount(async () => {
     <h1>Account Details</h1>
     <p><strong>Account Name:</strong> {accountName}
        <strong>Account Type:</strong> {accountType}</p>
-
+    <GetTransaction />
     <AddTransaction />
 
 

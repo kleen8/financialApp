@@ -1,4 +1,5 @@
 <script>
+import { triggerFetchTransactions } from "../stores/stores";
     let showModal = false;
     let transactionType = "Income";
     let amount = 0;
@@ -41,6 +42,7 @@
             body : JSON.stringify(transaction),
         });
         console.log(response.body);
+        triggerFetchTransactions.set(true);
         resetForm();
     }
     

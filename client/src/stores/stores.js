@@ -4,6 +4,9 @@ export const accounts = writable([]);
 export const isAuthenticated = writable(false);
 export const triggerFetchAccounts = writable(false);
 
+export const transactions = writable([]);
+export const triggerFetchTransactions = writable(false);
+
 export async function checkLoginStatus() {
     try {
         const response = await fetch('/api/check-login', {

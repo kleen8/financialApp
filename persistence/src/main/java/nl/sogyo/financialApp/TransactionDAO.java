@@ -34,7 +34,7 @@ public class TransactionDAO implements ITransactionDAO{
             PreparedStatement stmt = connection.prepareStatement(saveTransactionQry);
             stmt.setString(1, transactionDTO.getType());
             stmt.setDouble(2, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setString(3, transactionDTO.getCatergory());
+            stmt.setString(3, transactionDTO.getCategory());
             stmt.setBoolean(4, transactionDTO.getRecurrent());
             stmt.setString(5, transactionDTO.getTimeInterval());
             System.out.println(transactionDTO.getTimestamp());
@@ -73,11 +73,11 @@ public class TransactionDAO implements ITransactionDAO{
             double amount = resultSet.getDouble("amount");
             String category = resultSet.getString("category");
             Boolean recurrent = resultSet.getBoolean("recurrent");
-            String timeInterval = resultSet.getString("timeInterval");
+            String timeInterval = resultSet.getString("time_interval");
             String timestamp = resultSet.getString("timestamp");
             transactionDTO.setType(type);
             transactionDTO.setAmount(Double.toString(amount));
-            transactionDTO.setCatergory(category);
+            transactionDTO.setCategory(category);
             transactionDTO.setRecurrent(recurrent);
             transactionDTO.setTimeInterval(timeInterval);
             transactionDTO.setTimestamp(timestamp);
