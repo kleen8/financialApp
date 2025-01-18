@@ -24,8 +24,8 @@ public class TransactionDTO {
 	public String getCategory() {
 		return category;
 	}
-	public void setCategory(String catergory) {
-		this.category = catergory;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	public Boolean getRecurrent() {
 		return recurrent;

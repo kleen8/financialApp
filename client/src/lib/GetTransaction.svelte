@@ -1,19 +1,12 @@
 <script>
 import { onMount } from 'svelte';
-import { transactions, isAuthenticated, triggerFetchTransactions } from '../stores/stores';
-import { push } from 'svelte-spa-router';
+import { transactions } from '../stores/stores';
 
 let error = null;
 
 onMount(async () => {
-    //const isLoggedIn = await isAuthenticated.get();
-    //if (!isLoggedIn) {
-    //  push('/');
-    //  return;
-    //}
     fetchTransactions();
 });
-
 
 const fetchTransactions = async () =>  {
     try {
@@ -23,20 +16,11 @@ const fetchTransactions = async () =>  {
         }
         const fetchedTransactions = await response.json();
         transactions.set(fetchedTransactions);
-        console.log(fetchedTransactions);
     } catch (err) {
         error = err.message;
         console.error(err);
     }
 };
-
-triggerFetchTransactions.subscribe(($triggerFetchTransactions) => {
-    if($triggerFetchTransactions) {
-        console.log("Triggerd by store updating transactions");
-        fetchTransactions();
-        triggerFetchTransactions.set(false);
-    }
-});
 
 </script>
 
@@ -71,10 +55,10 @@ triggerFetchTransactions.subscribe(($triggerFetchTransactions) => {
         <div class="transaction-box">
             {#each $transactions as { amount, timestamp, category, type}}
                 <div class="transaction">
-                    <div><strong>Amount:</strong> ${amount}</div>
-                    <div><strong>Date:</strong> {new Date(timestamp).toLocaleDateString()}</div>
-                    <div><strong>Category:</strong> {category}</div>
-                    <div><strong>Type:</strong> {type}</div>
+                    <div><strong>Amount:</strong> ${amount} </div>
+                    <div><strong> Date:</strong> {new Date(timestamp).toLocaleDateString()} </div>
+                    <div><strong> Category:</strong> {category} </div>
+                    <div><strong> Type:</strong> {type} </div>
                 </div>
             {/each}
         </div>

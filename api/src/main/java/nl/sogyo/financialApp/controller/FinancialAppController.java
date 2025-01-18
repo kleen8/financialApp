@@ -163,9 +163,8 @@ public class FinancialAppController{
         return ResponseEntity.ok().body("ok");
     }
 
-
     @PostMapping("/post-transaction")
-    public ResponseEntity<String> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
+    public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
         System.out.println(transactionDTO.getCategory());
         System.out.println(transactionDTO.getTimeInterval());
         System.out.println(transactionDTO.getRecurrent());
@@ -175,9 +174,8 @@ public class FinancialAppController{
         transactionDTO.setAccountId(accountId);
         System.out.println("Trying to save transaction in api controller");
         transactionDAO.save(transactionDTO);
-        return ResponseEntity.ok().body("TransactionDTO works");
+        return ResponseEntity.ok(transactionDTO);
     }
-
 
     @GetMapping("/get-all-transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
