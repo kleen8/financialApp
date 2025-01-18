@@ -132,7 +132,7 @@ public class FinancialAppController{
                 //                                        account.getBalance());
                 System.out.println(accountDTO.getBalance());
                 System.out.println(accountDTO.getAccountId());
-                ResponseEntity.ok(accountDTO);
+                return ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {
             e.printStackTrace();
