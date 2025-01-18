@@ -1,10 +1,10 @@
 <script>
 import { onMount } from 'svelte';
-import { accounts, triggerFetchAccounts }  from '../stores/stores.js';
+import { accounts }  from '../stores/stores.js';
 import { push } from 'svelte-spa-router';
 
-let accountsList = [];
 let error = null;
+
 const fetchAccounts = async () => {
     try {
         const response = await fetch('/api/get-accounts')
@@ -12,22 +12,13 @@ const fetchAccounts = async () => {
             throw new Error('Error: ' + response.statusText);
         }
         const data = await response.json();
-        console.log(JSON.stringify(data));
         accounts.set(data);
-        accountsList = data;
+        console.log("In getAccounts, accounts are: " , $accounts);
     } catch (err){
         error = err.message;
         console.error(err);
     }
 };
-
-triggerFetchAccounts.subscribe(($triggerFetchAccounts) => {
-    if($triggerFetchAccounts) {
-        console.log("Triggerd by store");
-        fetchAccounts();
-        triggerFetchAccounts.set(false);
-        }
-});
 
 onMount(fetchAccounts);
 
@@ -48,7 +39,6 @@ async function handleButtonClick(account) {
         push('/account-details?' + queryParams);
     }
 }
-
 
 </script>
 
@@ -78,16 +68,16 @@ async function handleButtonClick(account) {
 
 {#if error}
     <p class="error">No accounts found. Create a new one!</p>
-{:else if accountsList.length === 0}
+{:else if $accounts.length === 0}
     <p class="error">No accounts found. Create a new one!</p>
 {:else}
     <!-- Render Accounts List -->
     <ul class="account-list">
-        {#each accountsList as account}
+        {#each $accounts as account }
             <li class="account-item">
                 <h3>{account.accountName}</h3>
                 <p>Type: {account.accountType}</p>
-                <p>Balance: ${account.balance.toFixed(2)}</p>
+                <p>Balance: {account.balance.toFixed(2)}</p>
                 <button on:click={() => handleButtonClick(account)}>View details</button>
             </li>
         {/each}

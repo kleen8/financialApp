@@ -130,7 +130,8 @@ public class FinancialAppController{
                 //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
                 //                                        account.getAccountType().getTypeName(),
                 //                                        account.getBalance());
-                System.out.println(accountDTO);
+                System.out.println(accountDTO.getBalance());
+                System.out.println(accountDTO.getAccountId());
                 ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {
