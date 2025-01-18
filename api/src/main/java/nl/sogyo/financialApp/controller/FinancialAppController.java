@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
@@ -126,6 +125,7 @@ public class FinancialAppController{
                 break;
             }
             if (account != null){
+                // TODO : Make it so this gets the right accountid so the front end is up to date!!!
                 accountDAO.save(account, userIdInt);
                 //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
                 //                                        account.getAccountType().getTypeName(),
@@ -180,7 +180,7 @@ public class FinancialAppController{
     @GetMapping("/get-all-transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        return ResponseEntity.ok(transactionDAO.getAllTransactionWitAccId(accountId));
+        return ResponseEntity.ok(transactionDAO.getAllTransactionDTOWitAccId(accountId));
     }
 
 }

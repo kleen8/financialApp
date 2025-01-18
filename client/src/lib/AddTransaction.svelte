@@ -41,6 +41,7 @@ async function addTransaction() {
         body : JSON.stringify(transaction),
     });
     const newTransaction = await response.json();
+    console.log("new transaction: ", newTransaction);
     transactions.update(currentTransactions => [...currentTransactions, newTransaction]);
     showModal = false;
     resetForm();

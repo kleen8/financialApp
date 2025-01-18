@@ -20,7 +20,6 @@ public class UserDAO implements IUserDAO{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
 
-
     private final String saveUserQuery = """
     INSERT INTO users (email, first_name, last_name,
     street_name, zip_code, house_number, city, country, password_hash) VALUES 

@@ -164,7 +164,7 @@ public class TransactionDAO implements ITransactionDAO{
 
 
     @Override
-    public List<Transaction> getAllTransactionWitId(int accountId){
+    public List<TransactionDTO> getAllTransactionWitId(int accountId){
         return null;
     }
 
