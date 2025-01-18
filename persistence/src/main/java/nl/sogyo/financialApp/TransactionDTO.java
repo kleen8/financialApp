@@ -2,6 +2,7 @@ package nl.sogyo.financialApp;
 
 public class TransactionDTO {
     private int accountId;
+    private int transactionId;
 	private String type;
     private String amount;
     private String category;
@@ -52,5 +53,11 @@ public class TransactionDTO {
     public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
+	public int getTransactionId() {
+		return transactionId;
+	}
+	public void setTransactionId(int transactionId) {
+		this.transactionId = transactionId;
+	}
 
 }

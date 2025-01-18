@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface ITransactionDAO {
     void save(TransactionDTO transactionDTO);
-    Transaction getTransactionWitId(int transactionId);
+    TransactionDTO getTransactionDTOWitId(int transactionId);
     List<Transaction> getAllTransactionWitId(int accountId);
-    void updateTransaction(int transactionId, Transaction transaction);
+    void updateTransaction(int transactionId, TransactionDTO transactionDTO);
     void deleteTransaction(int transactionId);
-    List<TransactionDTO> getAllTransactionWitAccId(int accountId);
+    List<TransactionDTO> getAllTransactionDTOWitAccId(int accountId);
 }
