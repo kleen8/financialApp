@@ -38,6 +38,34 @@ public class AccountDAO implements IAccountDAO{
     WHERE account_id = ?;
     """;
 
+    private final String saveAccountQueryReturnId = """
+    INSERT INTO accounts (user_id, account_type, account_name, balance)
+    VALUES (?, ?, ?, ?)
+    RETURNING id;
+    """;
+
+    @Override
+    public int saveAndReturnId(Account account, int userId) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(saveAccountQueryReturnId, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, userId);
+            stmt.setString(2, account.getAccountType().getTypeName());
+            stmt.setString(3, account.getAccountName());
+            stmt.setDouble(4, account.getBalance());
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0){
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()){
+                    return rs.getInt(1);
+                }
+            }
+            throw new RuntimeException("Databse error occured");
+        } catch (SQLException e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Databse error occured");
+        }
+    }
+
     @Override
     public void save(Account account, int userId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -49,6 +77,7 @@ public class AccountDAO implements IAccountDAO{
             stmt.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Databse error occured");
         }
     }
 

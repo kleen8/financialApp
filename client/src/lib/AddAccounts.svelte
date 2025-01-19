@@ -28,8 +28,6 @@ async function createAccount() {
     } else {
         let account;
         accountData.subscribe(data => (account = data));
-        //console.log(JSON.stringify($accountData));
-        //console.log(JSON.stringify(account));
         const response = await fetch("/api/create-account", {
             method: "POST",
             headers: {

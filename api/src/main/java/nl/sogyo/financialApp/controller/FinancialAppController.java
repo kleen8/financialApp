@@ -126,12 +126,12 @@ public class FinancialAppController{
             }
             if (account != null){
                 // TODO : Make it so this gets the right accountid so the front end is up to date!!!
-                accountDAO.save(account, userIdInt);
+                accountDTO.setAccountId(accountDAO.saveAndReturnId(account, userIdInt));
                 //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
                 //                                        account.getAccountType().getTypeName(),
                 //                                        account.getBalance());
-                System.out.println(accountDTO.getBalance());
-                System.out.println(accountDTO.getAccountId());
+                System.out.println("Account balance is: " + accountDTO.getBalance());
+                System.out.println("Account id is: " + accountDTO.getAccountId());
                 return ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {

@@ -20,8 +20,6 @@ const fetchAccounts = async () => {
     }
 };
 
-onMount(fetchAccounts);
-
 async function handleButtonClick(account) {
     console.log(account);
     const queryParams = new URLSearchParams({
@@ -66,9 +64,7 @@ async function handleButtonClick(account) {
 }
 </style>
 
-{#if error}
-    <p class="error">No accounts found. Create a new one!</p>
-{:else if $accounts.length === 0}
+{#if $accounts.length === 0}
     <p class="error">No accounts found. Create a new one!</p>
 {:else}
     <!-- Render Accounts List -->
