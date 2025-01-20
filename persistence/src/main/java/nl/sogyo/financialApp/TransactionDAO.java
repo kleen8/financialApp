@@ -63,13 +63,10 @@ public class TransactionDAO implements ITransactionDAO{
             stmt.setString(3, transactionDTO.getCategory());
             stmt.setBoolean(4, transactionDTO.getRecurrent());
             stmt.setString(5, transactionDTO.getTimeInterval());
-            System.out.println(transactionDTO.getTimestamp());
             stmt.setTimestamp(6,transformISOtoLocalDateTime(transactionDTO.getTimestamp()));
             stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
-            System.out.println("Transaction saved in DAO");
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
@@ -89,7 +86,6 @@ public class TransactionDAO implements ITransactionDAO{
                 return transactionDTOs;
             } 
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
@@ -110,12 +106,9 @@ public class TransactionDAO implements ITransactionDAO{
             stmt.setInt(8, transactionId);
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
-                System.out.println("Transaction updated successfully.");
-            } else {
-                System.out.println("No transaction found with ID: " + transactionId);
-            }
+                return;
+            } 
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
@@ -127,7 +120,6 @@ public class TransactionDAO implements ITransactionDAO{
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(deleteTransactionQry);
             stmt.setInt(1, transactionId);
-
             int rowsDeleted = stmt.executeUpdate();
             if (rowsDeleted > 0) {
                 System.out.println("Transaction deleted successfully.");

@@ -75,7 +75,6 @@ public class UserDAO implements IUserDAO{
         }
     }
 
-    // because then the frontend needs to get notified
 	@Override
     public User getUserWithId(int id){
         try (Connection connection = DatabaseConnection.getConnection()){
@@ -95,7 +94,6 @@ public class UserDAO implements IUserDAO{
     }
 
 
-    // because then the frontend needs to get notified
     @Override
     public User getUserWithEmail(String email){
         try {
@@ -252,6 +250,4 @@ public class UserDAO implements IUserDAO{
         throw new UserNotFoundException("User with email: " + email + " not found");
     }
 
-
 }
-

@@ -45,8 +45,6 @@ public class FinancialAppController{
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO){
         try {
-            System.out.println("first name: "+ userDTO.getFirstName());
-            System.out.println("Last name: " + userDTO.getLastName());
             User user = User.createUser(
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
@@ -125,11 +123,7 @@ public class FinancialAppController{
                 break;
             }
             if (account != null){
-                // TODO : Make it so this gets the right accountid so the front end is up to date!!!
                 accountDTO.setAccountId(accountDAO.saveAndReturnId(account, userIdInt));
-                //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
-                //                                        account.getAccountType().getTypeName(),
-                //                                        account.getBalance());
                 System.out.println("Account balance is: " + accountDTO.getBalance());
                 System.out.println("Account id is: " + accountDTO.getAccountId());
                 return ResponseEntity.ok(accountDTO);
@@ -154,25 +148,16 @@ public class FinancialAppController{
 
     @PostMapping("/post-account-credentials")
     public ResponseEntity<String> postAccountCred(@RequestBody AccountDTO accountDTO, HttpSession session){
-        System.out.println(accountDTO.getAccountId());
-        System.out.println(accountDTO.getAccountName());
-        System.out.println(accountDTO.getAccountType());
         session.setAttribute("accountId", accountDTO.getAccountId());
         session.setAttribute("accountName", accountDTO.getAccountName());
         session.setAttribute("accountType", accountDTO.getAccountType());
-        return ResponseEntity.ok().body("ok");
+        return ResponseEntity.ok("ok");
     }
 
     @PostMapping("/post-transaction")
     public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
-        System.out.println(transactionDTO.getCategory());
-        System.out.println(transactionDTO.getTimeInterval());
-        System.out.println(transactionDTO.getRecurrent());
-        System.out.println(session.getAttribute("accountId").getClass());
         Integer accountId = (Integer) session.getAttribute("accountId");
-        System.out.println("integer is: " + accountId);
         transactionDTO.setAccountId(accountId);
-        System.out.println("Trying to save transaction in api controller");
         transactionDAO.save(transactionDTO);
         return ResponseEntity.ok(transactionDTO);
     }

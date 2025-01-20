@@ -21,12 +21,12 @@ onMount(async () => {
     accountName = queryParams.get('name');
     accountType = queryParams.get('type');
 });
+
+
 </script>
 
 <main>
-    <h1>Account Details</h1>
-    <p><strong>Account Name:</strong> {accountName}
-       <strong>Account Type:</strong> {accountType}</p>
+    <h1>{accountName} {accountType} Account</h1>
     <GetTransaction />
     <AddTransaction />
 

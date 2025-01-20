@@ -1,9 +1,10 @@
 <script>
-import { onMount } from 'svelte';
 import { accounts }  from '../stores/stores.js';
 import { push } from 'svelte-spa-router';
 
 let error = null;
+
+
 
 const fetchAccounts = async () => {
     try {
@@ -19,6 +20,8 @@ const fetchAccounts = async () => {
         console.error(err);
     }
 };
+
+fetchAccounts();
 
 async function handleButtonClick(account) {
     console.log(account);

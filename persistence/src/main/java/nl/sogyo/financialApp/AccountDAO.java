@@ -88,7 +88,6 @@ public class AccountDAO implements IAccountDAO{
             stmt.setInt(1, accountId);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
         }
     }
@@ -103,7 +102,6 @@ public class AccountDAO implements IAccountDAO{
             stmt.setInt(4, accountId);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
         }
         throw new UnsupportedOperationException("Unimplemented method 'update'");
@@ -126,7 +124,6 @@ public class AccountDAO implements IAccountDAO{
                 LOGGER.error("Exception occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             return null;
         }
@@ -144,7 +141,6 @@ public class AccountDAO implements IAccountDAO{
             }
             return null;
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("Exception occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
@@ -163,12 +159,10 @@ public class AccountDAO implements IAccountDAO{
                 }
                 return accountsDTOs;
             } catch (Exception e) {
-                e.printStackTrace();
                 LOGGER.error("Exception occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
                 throw new RuntimeException("Server error occured");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
@@ -205,7 +199,6 @@ public class AccountDAO implements IAccountDAO{
             double balance = resultSet.getDouble("balance");
             int accountId = resultSet.getInt("id");
             return new AccountDTO(account_name, account_type, balance, accountId);
-
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
