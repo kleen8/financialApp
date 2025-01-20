@@ -38,6 +38,16 @@ public class AccountDAO implements IAccountDAO{
     WHERE account_id = ?;
     """;
 
+    private final String updateAccountBalanceQry = """
+    UPDATE accounts
+    SET balance = balance + ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?;
+    """;
+
+    private final String getAccountBalaceQry = """
+    SELECT balance FROM accounts WHERE id = ?;
+    """;
+
     private final String saveAccountQueryReturnId = """
     INSERT INTO accounts (user_id, account_type, account_name, balance)
     VALUES (?, ?, ?, ?)
@@ -205,4 +215,37 @@ public class AccountDAO implements IAccountDAO{
             return null;
         }
     }
+
+    protected void updateBalance(Connection connection, int accountId, double delta) {
+        try (PreparedStatement stmt = connection.prepareStatement(updateAccountBalanceQry)){
+            stmt.setDouble(1, delta);
+            stmt.setInt(2, accountId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Error updating account balance" + e.getMessage());
+        }
+    }
+
+	@Override
+	public Double getAccountBalance(int accountId) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(getAccountBalaceQry);
+            stmt.setInt(1, accountId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("balance");
+                }
+                throw new RuntimeException("Result set contains no balance");
+            } catch (Exception e) {
+
+                LOGGER.error("Exception occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+                throw new RuntimeException("Can't find the balance" + e.getMessage());
+            }
+        } catch (SQLException e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("database error occured");
+        }
+	}
+
 }

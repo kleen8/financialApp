@@ -54,9 +54,10 @@ public class TransactionDAO implements ITransactionDAO{
     """;
 
 	@Override
-	public void save(TransactionDTO transactionDTO) {
+	public void save(TransactionDTO transactionDTO, int accountId) {
         System.out.println("Trying to save a transaction, in the DAO");
         try (Connection connection = DatabaseConnection.getConnection()) {
+            connection.setAutoCommit(false);
             PreparedStatement stmt = connection.prepareStatement(saveTransactionQry);
             stmt.setString(1, transactionDTO.getType());
             stmt.setDouble(2, Double.parseDouble(transactionDTO.getAmount()));
@@ -66,6 +67,13 @@ public class TransactionDAO implements ITransactionDAO{
             stmt.setTimestamp(6,transformISOtoLocalDateTime(transactionDTO.getTimestamp()));
             stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
+            double delta = transactionDTO.getType().equalsIgnoreCase("income")
+                ? Double.parseDouble(transactionDTO.getAmount())
+                : -Double.parseDouble(transactionDTO.getAmount());
+            AccountDAO accountDAO = new AccountDAO();
+            accountDAO.updateBalance(connection, accountId, delta);
+            connection.commit();
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");

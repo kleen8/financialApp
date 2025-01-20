@@ -10,7 +10,7 @@ onMount(async () => {
 
 const fetchTransactions = async () =>  {
     try {
-        const response = await fetch('/api/get-all-transactions'); // Replace with your actual endpoint
+        const response = await fetch('/api/get-all-transactions');
         if (!response.ok) {
             throw new Error('Failed to fetch transactions');
         }
