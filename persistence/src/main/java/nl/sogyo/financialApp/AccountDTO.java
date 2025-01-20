@@ -1,11 +1,19 @@
-package nl.sogyo.financialApp.controller.DTO;
+package nl.sogyo.financialApp;
 
 public class AccountDTO {
-   private String accountName;
+    private int accountId;
+	private String accountName;
     private String accountType;
 	private double balance;
 
     public AccountDTO(){}
+
+    public AccountDTO(String accountName, String accountType, double balance, int accountId){
+        this.accountName = accountName;
+        this.accountType = accountType;
+        this.balance = balance;
+        this.accountId = accountId;
+    }
 
     public AccountDTO(String accountName, String accountType, double balance){
         this.accountName = accountName;
@@ -32,4 +40,11 @@ public class AccountDTO {
 		this.balance = balance;
 	}
 
+    public int getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
+    }
 }

@@ -20,7 +20,6 @@ public class UserDAO implements IUserDAO{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
 
-
     private final String saveUserQuery = """
     INSERT INTO users (email, first_name, last_name,
     street_name, zip_code, house_number, city, country, password_hash) VALUES 
@@ -76,7 +75,6 @@ public class UserDAO implements IUserDAO{
         }
     }
 
-    // because then the frontend needs to get notified
 	@Override
     public User getUserWithId(int id){
         try (Connection connection = DatabaseConnection.getConnection()){
@@ -96,7 +94,6 @@ public class UserDAO implements IUserDAO{
     }
 
 
-    // because then the frontend needs to get notified
     @Override
     public User getUserWithEmail(String email){
         try {
@@ -253,6 +250,4 @@ public class UserDAO implements IUserDAO{
         throw new UserNotFoundException("User with email: " + email + " not found");
     }
 
-
 }
-

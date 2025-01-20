@@ -1,10 +1,11 @@
-package nl.sogyo.financialApp.controller.DTO;
+package nl.sogyo.financialApp;
 
 public class TransactionDTO {
-
-    private String type;
+    private int accountId;
+    private int transactionId;
+	private String type;
     private String amount;
-    private String catergory;
+    private String category;
     private Boolean recurrent;
     private String timeInterval;
     private String timestamp;
@@ -21,11 +22,11 @@ public class TransactionDTO {
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	public String getCatergory() {
-		return catergory;
+	public String getCategory() {
+		return category;
 	}
-	public void setCatergory(String catergory) {
-		this.catergory = catergory;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	public Boolean getRecurrent() {
 		return recurrent;
@@ -46,5 +47,17 @@ public class TransactionDTO {
 		this.timestamp = timestamp;
 	}
 
+    public int getAccountId() {
+        return accountId;
+    }
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
+    }
+	public int getTransactionId() {
+		return transactionId;
+	}
+	public void setTransactionId(int transactionId) {
+		this.transactionId = transactionId;
+	}
 
 }

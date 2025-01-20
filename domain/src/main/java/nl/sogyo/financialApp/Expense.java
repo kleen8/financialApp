@@ -5,7 +5,6 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 
-// TODO: Write factory for Expense class
 
 public class Expense extends Transaction{
 

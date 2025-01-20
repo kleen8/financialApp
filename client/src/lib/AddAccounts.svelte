@@ -1,6 +1,6 @@
 <script>
 
-import { accounts, triggerFetchAccounts } from "../stores/stores.js";
+import { accounts } from "../stores/stores.js";
 import { writable } from "svelte/store";
 
 let showModal = false;
@@ -13,7 +13,7 @@ const accountTypes = ["General", "Saving", "Investing"];
 const accountData = writable({
     accountName: "",
     accountType: "General",
-    balance: 0.0
+    balance: 0
 });
 
 function resetForm() {
@@ -28,8 +28,6 @@ async function createAccount() {
     } else {
         let account;
         accountData.subscribe(data => (account = data));
-        console.log(JSON.stringify($accountData));
-        console.log(JSON.stringify(account));
         const response = await fetch("/api/create-account", {
             method: "POST",
             headers: {
@@ -37,10 +35,10 @@ async function createAccount() {
                 },
             body: JSON.stringify(account),
         });
-        const newAccount = await response.text();
-        console.log(JSON.stringify(newAccount));
+        console.log("account that got send is: ", account);
+        const newAccount = await response.json();
+        console.log("account updated with: ", newAccount);
         accounts.update(currentAccounts => [...currentAccounts, newAccount]);
-        triggerFetchAccounts.set(true);
         showModal = false;
         resetForm();
     }

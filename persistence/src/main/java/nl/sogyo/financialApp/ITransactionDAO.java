@@ -1,6 +1,12 @@
 package nl.sogyo.financialApp;
 
-public interface ITransactionDAO {
+import java.util.List;
 
-    void save();
+public interface ITransactionDAO {
+    void save(TransactionDTO transactionDTO);
+    TransactionDTO getTransactionDTOWitId(int transactionId);
+    List<TransactionDTO> getAllTransactionWitId(int accountId);
+    void updateTransaction(int transactionId, TransactionDTO transactionDTO);
+    void deleteTransaction(int transactionId);
+    List<TransactionDTO> getAllTransactionDTOWitAccId(int accountId);
 }

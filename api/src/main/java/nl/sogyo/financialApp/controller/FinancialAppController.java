@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
 import nl.sogyo.financialApp.*;
-import nl.sogyo.financialApp.controller.DTO.AccountDTO;
-import nl.sogyo.financialApp.controller.DTO.TransactionDTO;
-import nl.sogyo.financialApp.controller.DTO.UserDTO;
 
 @RestController
 @RequestMapping("/api")
@@ -27,15 +24,17 @@ public class FinancialAppController{
     private final IUserDAO userDAO;
     private final HttpSession session;
     private final IAccountDAO accountDAO; 
+    private final ITransactionDAO transactionDAO;
 
     @Autowired
-    public FinancialAppController(IUserDAO userDAO, IAccountDAO accountDAO, HttpSession session){
+    public FinancialAppController(IUserDAO userDAO, ITransactionDAO transactionDAO, IAccountDAO accountDAO, HttpSession session){
         this.userDAO = userDAO;
         this.accountDAO = accountDAO;
         this.session = session;
+        this.transactionDAO = transactionDAO;
     }
 
-    
+     
     @GetMapping("/hello")
     public String sayHello(){
         Object userEmail = session.getAttribute("userEmail");
@@ -46,8 +45,6 @@ public class FinancialAppController{
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody UserDTO userDTO){
         try {
-            System.out.println("first name: "+ userDTO.getFirstName());
-            System.out.println("Last name: " + userDTO.getLastName());
             User user = User.createUser(
                 userDTO.getFirstName(),
                 userDTO.getLastName(),
@@ -126,12 +123,10 @@ public class FinancialAppController{
                 break;
             }
             if (account != null){
-                accountDAO.save(account, userIdInt);
-                //AccountDTO accountDTO = new AccountDTO(account.getAccountName(),
-                //                                        account.getAccountType().getTypeName(),
-                //                                        account.getBalance());
-                System.out.println(accountDTO);
-                ResponseEntity.ok(accountDTO);
+                accountDTO.setAccountId(accountDAO.saveAndReturnId(account, userIdInt));
+                System.out.println("Account balance is: " + accountDTO.getBalance());
+                System.out.println("Account id is: " + accountDTO.getAccountId());
+                return ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,26 +139,33 @@ public class FinancialAppController{
     public ResponseEntity<List<AccountDTO>> getAccounts(HttpSession session){
         String userId = (String) session.getAttribute("userId");
         int userIdInt = Integer.parseInt(userId);
-        List<Account> accounts = accountDAO.getAllAccountWithUserId(userIdInt);
-        if (accounts == null || accounts.isEmpty()){
+        List<AccountDTO> accountsDTO = accountDAO.getAccountDTOsWithUserId(userIdInt);
+        if (accountsDTO == null || accountsDTO.isEmpty()){
             return ResponseEntity.noContent().build();
         }
-        List<AccountDTO> accountDTOs = accounts.stream()
-                                    .map(account -> new AccountDTO(
-                                        account.getAccountName(),
-                                        account.getAccountType().getTypeName(),
-                                        account.getBalance()
-                                    )).toList();
-        return ResponseEntity.ok(accountDTOs);        
+        return ResponseEntity.ok(accountsDTO);        
     }
 
+    @PostMapping("/post-account-credentials")
+    public ResponseEntity<String> postAccountCred(@RequestBody AccountDTO accountDTO, HttpSession session){
+        session.setAttribute("accountId", accountDTO.getAccountId());
+        session.setAttribute("accountName", accountDTO.getAccountName());
+        session.setAttribute("accountType", accountDTO.getAccountType());
+        return ResponseEntity.ok("ok");
+    }
 
     @PostMapping("/post-transaction")
-    public ResponseEntity<String> postTransaction(@RequestBody TransactionDTO transactionDTO){
-        System.out.println(transactionDTO.getCatergory());
-        System.out.println(transactionDTO.getTimeInterval());
-        System.out.println(transactionDTO.getRecurrent());
-        return ResponseEntity.ok().body("TransactionDTO works");
-
+    public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        transactionDTO.setAccountId(accountId);
+        transactionDAO.save(transactionDTO);
+        return ResponseEntity.ok(transactionDTO);
     }
+
+    @GetMapping("/get-all-transactions")
+    public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        return ResponseEntity.ok(transactionDAO.getAllTransactionDTOWitAccId(accountId));
+    }
+
 }
