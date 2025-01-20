@@ -135,6 +135,13 @@ public class FinancialAppController{
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/get-account-balance")
+    public ResponseEntity<Double> getAccountBalance(){
+        Integer accountId = (Integer) session.getAttribute("accountId");
+        System.out.println(accountId);
+        return ResponseEntity.ok(accountDAO.getAccountBalance(accountId));
+    }
+
     @GetMapping("/get-accounts")
     public ResponseEntity<List<AccountDTO>> getAccounts(HttpSession session){
         String userId = (String) session.getAttribute("userId");
@@ -158,7 +165,7 @@ public class FinancialAppController{
     public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
         transactionDTO.setAccountId(accountId);
-        transactionDAO.save(transactionDTO);
+        transactionDAO.save(transactionDTO, accountId);
         return ResponseEntity.ok(transactionDTO);
     }
 

@@ -76,7 +76,7 @@ async function handleButtonClick(account) {
             <li class="account-item">
                 <h3>{account.accountName}</h3>
                 <p>Type: {account.accountType}</p>
-                <p>Balance: {account.balance} </p>
+                <p>Balance: ${account.balance} </p>
                 <button on:click={() => handleButtonClick(account)}>View details</button>
             </li>
         {/each}

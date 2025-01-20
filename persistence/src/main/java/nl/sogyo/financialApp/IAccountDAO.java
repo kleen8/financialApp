@@ -9,5 +9,6 @@ public interface IAccountDAO {
     void update(Account account, int accountId);
     List<Account> getAllAccountWithUserId(int id);
     List<AccountDTO> getAccountDTOsWithUserId(int userId);
-    Account getAccountWithId(int id);
+    Account getAccountWithId(int accountId);
+    Double getAccountBalance(int accountId);
 }
