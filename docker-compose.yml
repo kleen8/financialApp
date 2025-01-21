@@ -40,9 +40,13 @@ services:
     build:
       context: .
       dockerfile: scheduler/Dockerfile
+    env_file:
+      - database.env
     depends_on:
       - database
       - backend
+    networks:
+      - app-network
 
 networks:
   app-network:
