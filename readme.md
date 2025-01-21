@@ -81,3 +81,15 @@ CREATE TABLE transactions (
     account_id INTEGER NOT NULL,
     CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 );
+
+CREATE TABLE recurring_transactions (
+    id SERIAL PRIMARY KEY,
+    transaction_id INT NOT NULL,
+    execution_count INT DEFAULT 0,
+    next_execution_date TIMESTAMP NOT NULL,
+    last_execution_date TIMESTAMP,
+    is_completed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
+);

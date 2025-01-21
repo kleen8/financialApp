@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class TransactionDAO implements ITransactionDAO{
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionDAO.class);
 
     /* Database table: 
@@ -36,12 +38,12 @@ public class TransactionDAO implements ITransactionDAO{
     private static final String updateTransactionQry = """
     UPDATE transactions
     SET type = ?,
-        amount = ?,
-        category = ?,
-        recurrent = ?,
-        time_interval = ?,
-        timestamp = ?,
-        account_id = ?,
+    amount = ?,
+    category = ?,
+    recurrent = ?,
+    time_interval = ?,
+    timestamp = ?,
+    account_id = ?,
     Where id = ?;
     """;
 
@@ -52,9 +54,69 @@ public class TransactionDAO implements ITransactionDAO{
     private static final String getTransactionWithId = """
     SELECT * FROM transactions WHERE id = ?;
     """;
+    private static final String getAllTransactionsQry = """
+    SELECT * FROM transactions;
+    """;
 
-	@Override
-	public void save(TransactionDTO transactionDTO, int accountId) {
+    private static final String getAllRecurrentTransactionsQry = """
+    SELECT * FROM transactions WHERE recurrent = true;
+    """;
+
+    public List<TransactionDTO> getAllRecuTransactionDTO() {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(getAllRecurrentTransactionsQry);
+            try (ResultSet resultSet = stmt.executeQuery()){
+                List<TransactionDTO> transactionDTOs = new ArrayList<TransactionDTO>();
+                while (resultSet.next()){
+                    TransactionDTO transactionDTO = mapToTransactionDTO(resultSet);
+                    transactionDTOs.add(transactionDTO);
+                }
+                return transactionDTOs;
+            } 
+        } catch (SQLException e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Database error occured");
+        }
+    }
+
+    public List<Transaction> getAllRecurrentTransactions() {
+        System.out.println("Gathering all transactions");
+        List<Transaction> transactionsList = new ArrayList<Transaction>();
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(getAllRecurrentTransactionsQry);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Transaction transaction = mapToTransaction(rs);
+                    transactionsList.add(transaction);
+                }
+            }
+            return transactionsList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Transaction> getAllTransactions() {
+        System.out.println("Gathering all transactions");
+        List<Transaction> transactionsList = new ArrayList<Transaction>();
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(getAllTransactionsQry);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Transaction transaction = mapToTransaction(rs);
+                    transactionsList.add(transaction);
+                }
+            }
+            return transactionsList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void save(TransactionDTO transactionDTO, int accountId) {
         System.out.println("Trying to save a transaction, in the DAO");
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
@@ -68,8 +130,8 @@ public class TransactionDAO implements ITransactionDAO{
             stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
             double delta = transactionDTO.getType().equalsIgnoreCase("income")
-                ? Double.parseDouble(transactionDTO.getAmount())
-                : -Double.parseDouble(transactionDTO.getAmount());
+            ? Double.parseDouble(transactionDTO.getAmount())
+            : -Double.parseDouble(transactionDTO.getAmount());
             AccountDAO accountDAO = new AccountDAO();
             accountDAO.updateBalance(connection, accountId, delta);
             connection.commit();
@@ -78,9 +140,9 @@ public class TransactionDAO implements ITransactionDAO{
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
-	}
+    }
 
-	@Override
+    @Override
     public List<TransactionDTO> getAllTransactionDTOWitAccId(int accountId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(getAllTransactionsWithAccIdQry);
@@ -97,7 +159,7 @@ public class TransactionDAO implements ITransactionDAO{
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Database error occured");
         }
-	}
+    }
 
     @Override
     public void updateTransaction(int transactionId, TransactionDTO transactionDTO) {
@@ -177,7 +239,7 @@ public class TransactionDAO implements ITransactionDAO{
         return sqlTimestamp;
     }
 
-	private TransactionDTO mapToTransactionDTO(ResultSet resultSet) {
+    private TransactionDTO mapToTransactionDTO(ResultSet resultSet) {
         try {
             TransactionDTO transactionDTO = new TransactionDTO();
             String type = resultSet.getString("type");
@@ -197,6 +259,59 @@ public class TransactionDAO implements ITransactionDAO{
             e.printStackTrace();
         }
         return null;
-	}
+    }
+
+
+    private Transaction mapToTransaction(ResultSet resultSet) {
+        try {
+            String type = resultSet.getString("type").toLowerCase(); 
+            double amount = resultSet.getDouble("amount");
+            String category = resultSet.getString("category");
+            Boolean recurrent = resultSet.getBoolean("recurrent");
+            String timeInterval = resultSet.getString("time_interval");
+            String timestamp = resultSet.getString("timestamp");
+            LocalDateTime localDateTime = stringToLDTtransformer(timestamp) ;
+            ChronoUnit chronoUnit = stringToChronoUnit(timeInterval);
+            switch (type) {
+                case "income":
+                return new Income(amount, localDateTime, category, chronoUnit);
+                case "expense":
+                return new Expense(amount, localDateTime, category, chronoUnit);
+                default:
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    private LocalDateTime stringToLDTtransformer(String timestamp){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssX");
+        OffsetDateTime offsetDateTime = OffsetDateTime.parse(timestamp, formatter);
+        LocalDateTime dateTime = offsetDateTime.toLocalDateTime();
+        return dateTime;
+    }
+
+    private ChronoUnit stringToChronoUnit(String timeInterval){
+        if (timeInterval != null){
+            switch(timeInterval.toLowerCase()){
+                case "daily":
+                return ChronoUnit.DAYS;
+                case "weekly":
+                return ChronoUnit.WEEKS;
+                case "monthly":
+                return ChronoUnit.MONTHS;
+                case "yearly":
+                return ChronoUnit.YEARS;
+                default:
+                throw new IllegalArgumentException("Invalid time interval");
+            }
+        } else {
+            return null;
+        }
+    }
 
 }
