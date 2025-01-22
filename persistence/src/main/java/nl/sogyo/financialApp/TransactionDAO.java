@@ -242,12 +242,14 @@ public class TransactionDAO implements ITransactionDAO{
     private TransactionDTO mapToTransactionDTO(ResultSet resultSet) {
         try {
             TransactionDTO transactionDTO = new TransactionDTO();
+            int id = resultSet.getInt("id");
             String type = resultSet.getString("type");
             double amount = resultSet.getDouble("amount");
             String category = resultSet.getString("category");
             Boolean recurrent = resultSet.getBoolean("recurrent");
             String timeInterval = resultSet.getString("time_interval");
             String timestamp = resultSet.getString("timestamp");
+            transactionDTO.setTransactionId(id);
             transactionDTO.setType(type);
             transactionDTO.setAmount(Double.toString(amount));
             transactionDTO.setCategory(category);
