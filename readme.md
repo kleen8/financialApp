@@ -84,6 +84,7 @@ CREATE TABLE transactions (
 
 CREATE TABLE recurring_transactions (
     id SERIAL PRIMARY KEY,
+    amount NUMERIC(15, 2) NOT NULL,
     transaction_id INT NOT NULL,
     execution_count INT DEFAULT 0,
     next_execution_date TIMESTAMP NOT NULL,
