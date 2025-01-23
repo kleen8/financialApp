@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . /app
 
 # Build the scheduler module
-RUN mvn clean install -pl scheduler -am
+RUN mvn install -pl scheduler -am
 
 # Runtime stage
 FROM openjdk:17-jdk-slim

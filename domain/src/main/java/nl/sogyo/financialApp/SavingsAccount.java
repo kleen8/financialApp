@@ -22,4 +22,10 @@ public class SavingsAccount extends Account{
 	public AccountType getAccountType() {
         return AccountType.SAVINGS;
 	}
+
+	@Override
+	public void processRecurrentTransactions() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'processRecurrentTransactions'");
+	}
 }

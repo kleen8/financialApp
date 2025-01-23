@@ -58,10 +58,53 @@ public class TransactionDAO implements ITransactionDAO{
     SELECT * FROM transactions;
     """;
 
+    private static final String getTransactionAmount = """
+    SELECT amount FROM transactions
+    WHERE id = ?;
+    """;
+
+    private static final String getTransactionTypeQry = """
+    SELECT type FROM transactions
+    WHERE id = ?;
+    """;
+
     private static final String getAllRecurrentTransactionsQry = """
     SELECT * FROM transactions WHERE recurrent = true;
     """;
 
+    @Override
+    public String getTransactionType(int transactionId){
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(getTransactionTypeQry);
+            stmt.setInt(1, transactionId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()){
+                    return rs.getString("type");
+                }
+                throw new RuntimeException("Database error");
+            } 
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error");
+        }
+    }
+
+    @Override
+    public Double getTransactionAmount(int transactionId){
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(getTransactionAmount);
+            stmt.setInt(1, transactionId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()){
+                    return rs.getDouble("amount");
+                }
+                throw new RuntimeException("Database error");
+            } 
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error");
+        }
+    }
+
+    @Override
     public List<TransactionDTO> getAllRecuTransactionDTO() {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(getAllRecurrentTransactionsQry);
@@ -78,7 +121,8 @@ public class TransactionDAO implements ITransactionDAO{
             throw new RuntimeException("Database error occured");
         }
     }
-
+    
+    @Override
     public List<Transaction> getAllRecurrentTransactions() {
         System.out.println("Gathering all transactions");
         List<Transaction> transactionsList = new ArrayList<Transaction>();
@@ -94,6 +138,23 @@ public class TransactionDAO implements ITransactionDAO{
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public Transaction getTransaction(int transactionId){
+        try (Connection conn = DatabaseConnection.getConnection()){
+            PreparedStatement stmt = conn.prepareStatement(getTransactionWithId);
+            stmt.setInt(1, transactionId);
+            try (ResultSet rs = stmt.executeQuery()){
+                if (rs.next()){
+                    return mapToTransaction(rs);
+                }
+            }
+            throw new RuntimeException("No transaction found");
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException("Error in getting transactions");
         }
     }
 
@@ -249,6 +310,8 @@ public class TransactionDAO implements ITransactionDAO{
             Boolean recurrent = resultSet.getBoolean("recurrent");
             String timeInterval = resultSet.getString("time_interval");
             String timestamp = resultSet.getString("timestamp");
+            int accountId = resultSet.getInt("account_id");
+            transactionDTO.setAccountId(accountId);
             transactionDTO.setTransactionId(id);
             transactionDTO.setType(type);
             transactionDTO.setAmount(Double.toString(amount));

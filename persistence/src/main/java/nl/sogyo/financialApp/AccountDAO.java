@@ -144,6 +144,7 @@ public class AccountDAO implements IAccountDAO{
     public Account getAccountWithId(int id) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findAccountById);
+            stmt.setInt(1, id);
             try (ResultSet resultSet = stmt.executeQuery()){
                 if (resultSet.next()){
                     return mapToAccount(resultSet);
@@ -213,6 +214,20 @@ public class AccountDAO implements IAccountDAO{
             e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public void updateBalance(int accountId, double delta) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (PreparedStatement stmt = conn.prepareStatement(updateAccountBalanceQry)){
+            stmt.setDouble(1, delta);
+            stmt.setInt(2, accountId);
+            stmt.executeUpdate();
+            }
+        } catch (Exception e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Error updating account balance" + e.getMessage());
         }
     }
 
