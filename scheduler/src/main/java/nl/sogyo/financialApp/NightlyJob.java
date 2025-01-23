@@ -36,7 +36,9 @@ public class NightlyJob implements Job {
                     List<RecurrentTransactionDTO> recurrentTransactionsDTOsForId = 
                     recurrentTransactionDAO.getAllRecurrentTransactionDTOsId(trns.getTransactionId());
                     for (RecurrentTransactionDTO rTrns : recurrentTransactionsDTOsForId){
-                        if((rTrns.getNext_execution_date().isAfter(LocalDateTime.now()) || rTrns.getNext_execution_date().isEqual(LocalDateTime.now().withHour(0).withMinute(0)))
+                        if((rTrns.getNext_execution_date().withHour(0).withMinute(0).withSecond(0).withNano(0).isBefore(LocalDateTime.now())
+                                || rTrns.getNext_execution_date().withHour(0).withMinute(0).withSecond(0).withNano(0)
+                                    .isEqual(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0)))
                                 && !rTrns.getIs_completed()){
                             System.out.println("Transaction should be done for transaction with id: " + trns.getTransactionId());   
                             System.out.println(trns.getAccountId());
