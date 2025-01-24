@@ -104,6 +104,12 @@
                 isStringNotEmpty($formData.email) &&
                 isStringNotEmpty($formData.country);
     }
+
+    function pushLoginPage(){
+        push('/');
+    }
+
+
 </script>
 
 <main>
@@ -155,7 +161,11 @@
         <button type="submit" 
             disabled={!isFormValid()}
             >Create Account</button>
+        <button type="button" on:click={pushLoginPage}>Go back</button>
     </form>
+
+
+
 </main>
 
 
@@ -168,6 +178,7 @@
     }
 
     button {
+        padding: auto;
         width: 200px;
     }
 
@@ -175,7 +186,7 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        left: 200px;
+        left: 240px;
         gap: 15px;
         margin: 0 auto;
 

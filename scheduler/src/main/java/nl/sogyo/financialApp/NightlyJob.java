@@ -12,6 +12,7 @@ public class NightlyJob implements Job {
     private final IRecurrentTransactionDAO recurrentTransactionDAO;
     private final ITransactionDAO transactionDAO;
     private final IAccountDAO accountDAO;
+
     public NightlyJob() {
         this.recurrentTransactionDAO = new RecurrentTransactionDAO();
         this.transactionDAO = new TransactionDAO();
@@ -62,9 +63,8 @@ public class NightlyJob implements Job {
                                 System.out.println("Is Expense");
                             }
                             System.out.println("New balance after transaction is: " + currentBalance);
-                            accountDAO.updateBalance(trns.getAccountId(), currentBalance);
-                            recurrentTransactionDAO.updateRecTransIsComplete(rTrns.getId()); 
-                            trns.setTimestamp(LocalDateTime.now().withSecond(1).withNano(0).toString());
+                            accountDAO.updateBalance(trns.getAccountId(), currentBalance); recurrentTransactionDAO.updateRecTransIsComplete(rTrns.getId()); 
+                            trns.setTimestamp(rTrns.getNext_execution_date().withHour(0).withMinute(0).withSecond(1).toString());
                             recurrentTransactionDAO.saveRecTrans(trns);
                         }
                     }

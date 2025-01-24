@@ -43,6 +43,11 @@ public class AccountDAO implements IAccountDAO{
     SET balance = balance + ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?;
     """;
+    private final String setAccountBalanceQry = """
+    UPDATE accounts
+    SET balance = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?;
+    """;
 
     private final String getAccountBalaceQry = """
     SELECT balance FROM accounts WHERE id = ?;
@@ -220,7 +225,7 @@ public class AccountDAO implements IAccountDAO{
     @Override
     public void updateBalance(int accountId, double delta) {
         try (Connection conn = DatabaseConnection.getConnection()) {
-        try (PreparedStatement stmt = conn.prepareStatement(updateAccountBalanceQry)){
+        try (PreparedStatement stmt = conn.prepareStatement(setAccountBalanceQry)){
             stmt.setDouble(1, delta);
             stmt.setInt(2, accountId);
             stmt.executeUpdate();

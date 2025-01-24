@@ -4,8 +4,6 @@ import { push } from 'svelte-spa-router';
 
 let error = null;
 
-
-
 const fetchAccounts = async () => {
     try {
         const response = await fetch('/api/get-accounts')

@@ -1,6 +1,7 @@
 <script>
     import GetAccounts from '../lib/GetAccounts.svelte';
     import AddAccount from '../lib/AddAccounts.svelte';
+    import LogoutUser from  '../lib/LogoutUser.svelte';
     import { checkLoginStatus, isAuthenticated } from "../stores/stores";
     import { onMount } from 'svelte';
     import { push } from 'svelte-spa-router';
@@ -28,6 +29,7 @@
 
     <GetAccounts />
     <AddAccount />
+    <LogoutUser />
 </main>
 
 <style>

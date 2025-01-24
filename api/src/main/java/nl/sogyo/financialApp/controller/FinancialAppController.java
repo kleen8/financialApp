@@ -69,6 +69,30 @@ public class FinancialAppController{
         }
     }
 
+    @PostMapping("/logout-user")
+    public ResponseEntity<String> logoutUser(HttpSession session){
+        if (session != null){
+            session.invalidate();
+            return ResponseEntity.ok("Logged out user");
+        } else {
+            return ResponseEntity.ok("Didn't work");
+        }
+    }
+
+    @PostMapping("/delete-account")
+    public ResponseEntity<String> deleteAccount(HttpSession session){
+        try {
+            System.out.println("in delete account, accound id is: " + session.getAttribute("accountId"));
+            Integer accountId = (Integer) session.getAttribute("accountId");
+            accountDAO.delete(accountId);
+            return ResponseEntity.ok("in delete account");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error");
+        }
+
+    }
+
     @PostMapping("/login-user")
     public ResponseEntity<String> loginUser(@RequestBody String jsonString, HttpSession session){
         try {
