@@ -6,6 +6,7 @@ public interface ITransactionDAO {
     String getTransactionType(int transactionId);
     void save(TransactionDTO transactionDTO, int accountId);
     TransactionDTO getTransactionDTOWitId(int transactionId);
+
     List<TransactionDTO> getAllTransactionWitId(int accountId);
     void updateTransaction(int transactionId, TransactionDTO transactionDTO);
     void deleteTransaction(int transactionId);

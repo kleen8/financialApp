@@ -187,7 +187,7 @@ public class TransactionDAO implements ITransactionDAO{
             stmt.setString(3, transactionDTO.getCategory());
             stmt.setBoolean(4, transactionDTO.getRecurrent());
             stmt.setString(5, transactionDTO.getTimeInterval());
-            stmt.setTimestamp(6,transformISOtoLocalDateTime(transactionDTO.getTimestamp()));
+            stmt.setTimestamp(6, Timestamp.valueOf(transactionDTO.getLocaldatetime()));
             stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
             double delta = transactionDTO.getType().equalsIgnoreCase("income")
@@ -311,6 +311,7 @@ public class TransactionDAO implements ITransactionDAO{
             String timeInterval = resultSet.getString("time_interval");
             String timestamp = resultSet.getString("timestamp");
             int accountId = resultSet.getInt("account_id");
+            LocalDateTime newTime = resultSet.getTimestamp("timestamp").toLocalDateTime();
             transactionDTO.setAccountId(accountId);
             transactionDTO.setTransactionId(id);
             transactionDTO.setType(type);
@@ -319,6 +320,7 @@ public class TransactionDAO implements ITransactionDAO{
             transactionDTO.setRecurrent(recurrent);
             transactionDTO.setTimeInterval(timeInterval);
             transactionDTO.setTimestamp(timestamp);
+            transactionDTO.setLocaldatetime(newTime);
             return transactionDTO;
         } catch (Exception e) {
             e.printStackTrace();

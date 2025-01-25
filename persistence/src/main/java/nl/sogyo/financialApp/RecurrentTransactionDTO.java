@@ -7,13 +7,20 @@ public class RecurrentTransactionDTO {
     double amount;
     double balance_before;
     double balance_after;
-    int transaction_id;
+    String type;
+	int transaction_id;
     LocalDateTime next_execution_date;
     LocalDateTime last_execution_date;
     Boolean is_completed;
     LocalDateTime created_at;
     LocalDateTime updated_at;
 
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
 	public int getId() {
 		return id;
 	}

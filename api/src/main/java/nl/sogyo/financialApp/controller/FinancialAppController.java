@@ -1,5 +1,9 @@
 package nl.sogyo.financialApp.controller;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -188,6 +192,11 @@ public class FinancialAppController{
     @PostMapping("/post-transaction")
     public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
+        System.out.println("transactionDTO timestamp:  " + transactionDTO.getTimestamp());
+        Instant instant = Instant.parse(transactionDTO.getTimestamp());
+        LocalDateTime newTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        System.out.println(newTime);
+        transactionDTO.setLocaldatetime(newTime);
         transactionDTO.setAccountId(accountId);
         transactionDAO.save(transactionDTO, accountId);
         return ResponseEntity.ok(transactionDTO);

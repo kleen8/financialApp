@@ -19,9 +19,10 @@ public class QuartzSchedulerApp {
 
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
+
         scheduler.scheduleJob(job, trigger);
 
-        scheduler.getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
+       scheduler.getListenerManager().addSchedulerListener(new SchedulerListenerSupport() {
             @Override
             public void schedulerStarted(){
                 try {
@@ -34,6 +35,7 @@ public class QuartzSchedulerApp {
         });
 
         scheduler.start();
+
     }
 
 }

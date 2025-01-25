@@ -1,5 +1,7 @@
 package nl.sogyo.financialApp;
 
+import java.time.LocalDateTime;
+
 public class TransactionDTO {
     private int accountId;
     private int transactionId;
@@ -9,6 +11,16 @@ public class TransactionDTO {
     private Boolean recurrent;
     private String timeInterval;
     private String timestamp;
+    
+    private LocalDateTime localdatetime;
+
+	public LocalDateTime getLocaldatetime() {
+		return localdatetime;
+	}
+
+	public void setLocaldatetime(LocalDateTime localdatetime) {
+		this.localdatetime = localdatetime;
+	}
 
 	public String getType() {
 		return type;
