@@ -3,18 +3,27 @@ package nl.sogyo.financialApp;
 import java.time.LocalDateTime;
 
 public class RecurrentTransactionDTO {
-    int id;
-    double amount;
-    double balance_before;
-    double balance_after;
-    String type;
-	int transaction_id;
-    LocalDateTime next_execution_date;
-    LocalDateTime last_execution_date;
-    Boolean is_completed;
-    LocalDateTime created_at;
-    LocalDateTime updated_at;
+   private int id;
+   private double amount;
+   private double balance_before;
+   private double balance_after;
+   private String type;
+   private int transaction_id;
+   private LocalDateTime next_execution_date;
+   private LocalDateTime last_execution_date;
+   private Boolean is_completed;
+   private LocalDateTime created_at;
+   private LocalDateTime updated_at;
+   private String catergoy;
+   private int account_id;
+   private String timeInterval;
 
+    public String getTimeInterval() {
+        return timeInterval;
+    }
+    public void setTimeInterval(String timeInterval) {
+        this.timeInterval = timeInterval;
+    }
     public String getType() {
         return type;
     }
@@ -83,5 +92,16 @@ public class RecurrentTransactionDTO {
 	public void setUpdated_at(LocalDateTime updated_at) {
 		this.updated_at = updated_at;
 	}
-
+	public String getCatergoy() {
+		return catergoy;
+	}
+	public void setCatergoy(String catergoy) {
+		this.catergoy = catergoy;
+	}
+	public int getAccount_id() {
+		return account_id;
+	}
+	public void setAccount_id(int account_id) {
+		this.account_id = account_id;
+	}
 }

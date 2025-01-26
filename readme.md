@@ -91,8 +91,11 @@ CREATE TABLE recurring_transactions (
     transaction_id INT NOT NULL,
     next_execution_date TIMESTAMP NOT NULL,
     last_execution_date TIMESTAMP,
+    category TEXT NOT NULL,
+    account_id INT NOT NULL,
     is_completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
+    CONSTRAINT fk_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE,
+    CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 );

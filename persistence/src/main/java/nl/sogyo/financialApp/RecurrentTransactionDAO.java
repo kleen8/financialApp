@@ -16,8 +16,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
 
     private static final String saveRecurringTransactionQry = """
     INSERT INTO recurring_transactions
-    (amount, type, transaction_id, next_execution_date, last_execution_date)
-    VALUES (?, ?, ?, ?, ?);
+    (amount, type, transaction_id, next_execution_date, last_execution_date, category, account_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?);
     """;
 
     private static final String getRecurringTransactionQryId = """
@@ -149,10 +149,23 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             trns.setIs_completed(rs.getBoolean("is_completed"));
             trns.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());
             trns.setUpdated_at(rs.getTimestamp("updated_at").toLocalDateTime());
+            trns.setCategory(rs.getString("category"));
+            trns.setAccount_id(rs.getInt("account_id"));
             return trns;
         } catch (Exception e) {
             e.getMessage();
             return null;
+        }
+    }
+
+    private TransactionDTO mapRecTransToTransDTO(ResultSet rs){
+        TransactionDTO trns = new TransactionDTO();
+        try {
+            trns.setRecurrent(true);
+            return trns;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return trns;
         }
     }
     
@@ -244,7 +257,6 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             stmt.setInt(3, transactionDTO.getTransactionId());
             LocalDateTime nextTime = transactionDTO.getLocaldatetime();
             LocalDateTime newNextTime = calculateNextExecutionDateInDb(nextTime, transactionDTO.getTimeInterval());
-            System.out.println("In insert next exec date: " + newNextTime);
             stmt.setTimestamp(3, Timestamp.valueOf(newNextTime));
             LocalDateTime nextExecutionDate2 = nextTime;
             stmt.setTimestamp(4, Timestamp.valueOf(nextExecutionDate2));
@@ -277,6 +289,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             LocalDateTime localDateTime = offsetDateTime.toLocalDateTime();
             stmt.setTimestamp(4, Timestamp.valueOf(nextTime));
             stmt.setTimestamp(5, Timestamp.valueOf(localDateTime));
+            stmt.setString(6, transactionDTO.getCategory());
+            stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
         }
     }
