@@ -281,33 +281,9 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
         }
     }
 
-    private LocalDateTime updCalculateNextExecutionDate(String timestamp, String timeInterval){
-        System.out.println(timestamp);
-        LocalDateTime originalDateTime = LocalDateTime.parse(timestamp, 
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
-        ChronoUnit chronoUnit = mapTimeIntervalToChronoUnit(timeInterval);
-        return originalDateTime.plus(1, chronoUnit);
-    }
-
-    private LocalDateTime calculateNextExecutionDate(String timestamp, String timeInterval){
-        LocalDateTime originalDateTime = LocalDateTime.parse(timestamp, 
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssX"));
-        ChronoUnit chronoUnit = mapTimeIntervalToChronoUnit(timeInterval);
-        return originalDateTime.plus(1, chronoUnit);
-    }
-
     private LocalDateTime calculateNextExecutionDateInDb(LocalDateTime timestamp, String timeInterval){
         System.out.println("Timestamp in calc exec in db: " + timestamp);
         LocalDateTime originalDateTime = timestamp;
-        ChronoUnit chronoUnit = mapTimeIntervalToChronoUnit(timeInterval);
-        return originalDateTime.plus(1, chronoUnit);
-    }
-
-    private LocalDateTime calculateNextExecutionDateInDb(String timestamp, String timeInterval){
-        System.out.println("Timestamp in calc exec in db: " + timestamp);
-        LocalDateTime originalDateTime = LocalDateTime.parse(timestamp, 
-            DateTimeFormatter.ISO_LOCAL_DATE_TIME).withSecond(0);
-        originalDateTime = originalDateTime.withHour(0).withMinute(0).withSecond(0);
         ChronoUnit chronoUnit = mapTimeIntervalToChronoUnit(timeInterval);
         return originalDateTime.plus(1, chronoUnit);
     }
