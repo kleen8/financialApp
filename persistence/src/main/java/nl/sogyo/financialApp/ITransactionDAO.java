@@ -6,7 +6,6 @@ public interface ITransactionDAO {
     String getTransactionType(int transactionId);
     void save(TransactionDTO transactionDTO, int accountId);
     TransactionDTO getTransactionDTOWitId(int transactionId);
-
     List<TransactionDTO> getAllTransactionWitId(int accountId);
     void updateTransaction(int transactionId, TransactionDTO transactionDTO);
     void deleteTransaction(int transactionId);
@@ -15,4 +14,5 @@ public interface ITransactionDAO {
     List<TransactionDTO> getAllRecuTransactionDTO();
     Double getTransactionAmount(int transactionId); 
     Transaction getTransaction(int transactionId);
+    List<TransactionDTO> getTransactionByIdDescOrd(int accountId);
 }

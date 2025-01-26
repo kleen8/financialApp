@@ -46,6 +46,7 @@ async function handleButtonClick(account) {
     margin: 20px;
     padding: 0;
     list-style: none;
+    overflow-y: auto;
 }
 .account-item {
     border: 1px solid #ddd;
@@ -60,11 +61,22 @@ async function handleButtonClick(account) {
 .account-item p {
     margin: 5px 0;
 }
+
+.account-list-container {
+    display: flex; /* Enables flexbox */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 50vh; /* Makes the container take up the full height of the viewport */
+    overflow: hidden;
+}
+
+
 .error {
     font-weight: bold;
 }
 </style>
 
+<div class="account-list-container">
 {#if $accounts.length === 0}
     <p class="error">No accounts found. Create a new one!</p>
 {:else}
@@ -80,3 +92,5 @@ async function handleButtonClick(account) {
         {/each}
     </ul>
 {/if}
+
+</div>

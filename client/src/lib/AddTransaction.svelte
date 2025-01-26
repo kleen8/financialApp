@@ -42,7 +42,7 @@ async function addTransaction() {
     });
     const newTransaction = await response.json();
     console.log("new transaction: ", newTransaction);
-    transactions.update(currentTransactions => [...currentTransactions, newTransaction]);
+    transactions.update(currentTransactions => [newTransaction, ...currentTransactions]);
     showModal = false;
     resetForm();
 }

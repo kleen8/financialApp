@@ -17,7 +17,7 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private static final String saveRecurringTransactionQry = """
     INSERT INTO recurring_transactions
     (amount, type, transaction_id, next_execution_date, last_execution_date)
-    VALUES (?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?);
     """;
 
     private static final String getRecurringTransactionQryId = """
@@ -88,6 +88,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     
     @Override
     public List<RecurrentTransactionDTO> getAllRecurrentTransactionDTOsId(int transactionId){
+        System.out.println("In get recurrent transaction dto's id is: " + transactionId);
+
         List<RecurrentTransactionDTO> transactionDTOs = new ArrayList<RecurrentTransactionDTO>();
         try (Connection conn = DatabaseConnection.getConnection()) {
             try(PreparedStatement stmt = conn.prepareStatement(getRecurringTransactionQryId)) {
@@ -238,7 +240,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private void insertRecurringTransaction(Connection conn, TransactionDTO transactionDTO) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(saveRecurringTransactionQry)) {
             stmt.setDouble(1, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setInt(2, transactionDTO.getTransactionId());
+            stmt.setString(2, transactionDTO.getType());
+            stmt.setInt(3, transactionDTO.getTransactionId());
             LocalDateTime nextTime = transactionDTO.getLocaldatetime();
             LocalDateTime newNextTime = calculateNextExecutionDateInDb(nextTime, transactionDTO.getTimeInterval());
             System.out.println("In insert next exec date: " + newNextTime);
@@ -252,7 +255,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private void insertUpdatedRecurringTransaction(Connection conn, TransactionDTO transactionDTO) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(saveRecurringTransactionQry)) {
             stmt.setDouble(1, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setInt(2, transactionDTO.getTransactionId());
+            stmt.setString(2, transactionDTO.getType());
+            stmt.setInt(3, transactionDTO.getTransactionId());
             LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime(), transactionDTO.getTimeInterval());
             System.out.println(LocalDateTime.now().toString());
             LocalDateTime localDateTime = LocalDateTime.now();
@@ -265,8 +269,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private void insertNewRecurringTransaction(Connection conn, TransactionDTO transactionDTO) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(saveRecurringTransactionQry)) {
             stmt.setDouble(1, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setInt(2, transactionDTO.getTransactionId());
-            stmt.setString(3, transactionDTO.getType());
+            stmt.setString(2, transactionDTO.getType());
+            stmt.setInt(3, transactionDTO.getTransactionId());
             LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime(), transactionDTO.getTimeInterval());
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(transactionDTO.getTimestamp(), 
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssX"));

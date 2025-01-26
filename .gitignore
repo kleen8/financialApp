@@ -20,3 +20,5 @@ financialApp/.metadata
 # Maven Wrapper
 .mvn/wrapper/maven-wrapper.jar
 **.env
+scheduler/dependency-reduced-pom.xml
+

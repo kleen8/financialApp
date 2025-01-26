@@ -28,9 +28,18 @@
     </div>
 
     <GetAccounts />
+    
     <AddAccount />
-    <LogoutUser />
+
+    <div class="logout-button">
+        <LogoutUser />
+    </div>
 </main>
 
 <style>
+
+    .logout-button {
+        position: relative;
+        margin-top: 5%;
+    }
 </style>

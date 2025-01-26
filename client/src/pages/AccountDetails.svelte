@@ -67,8 +67,10 @@ function pushToHomePage() {
 
     <div class="header">
 
-        <button type="button" on:click={pushToHomePage} class="go-back-button">Go back</button>
-        
+        <div class="homeButton">
+            <button type="button" on:click={pushToHomePage} class="go-back-button">Go back</button>
+        </div>
+
         <div class="title">
             <h1>{accountName} {accountType} Account</h1>
         </div>
@@ -115,7 +117,8 @@ function pushToHomePage() {
     }
 
     .delete-button{
-        bottom: 0em;
+     position: relative;
+     margin-top: 5%;
     }
 
    .header .logout-button {

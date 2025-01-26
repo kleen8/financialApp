@@ -205,7 +205,7 @@ public class FinancialAppController{
     @GetMapping("/get-all-transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        return ResponseEntity.ok(transactionDAO.getAllTransactionDTOWitAccId(accountId));
+        return ResponseEntity.ok(transactionDAO.getTransactionByIdDescOrd(accountId));
     }
 
 }

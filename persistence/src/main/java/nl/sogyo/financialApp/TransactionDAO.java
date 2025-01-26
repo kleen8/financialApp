@@ -35,6 +35,12 @@ public class TransactionDAO implements ITransactionDAO{
     SELECT * FROM transactions WHERE account_id = ?;
     """;
 
+    private static final String getAllTransactionsWithAccIdDescQry = """
+    SELECT * FROM transactions WHERE account_id = ?
+    ORDER BY timestamp DESC;
+    """;
+
+
     private static final String updateTransactionQry = """
     UPDATE transactions
     SET type = ?,
@@ -85,6 +91,25 @@ public class TransactionDAO implements ITransactionDAO{
             } 
         } catch (SQLException e) {
             throw new RuntimeException("Database error");
+        }
+    }
+
+    @Override
+    public List<TransactionDTO> getTransactionByIdDescOrd(int accountId){
+        List<TransactionDTO> transactionDTOs = new ArrayList<TransactionDTO>();
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(getAllTransactionsWithAccIdDescQry);
+            stmt.setInt(1, accountId);
+            try(ResultSet rs = stmt.executeQuery()){
+                while (rs.next()) {
+                    TransactionDTO transaction = mapToTransactionDTO(rs);
+                    transactionDTOs.add(transaction);
+                }
+            }
+           return transactionDTOs; 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return transactionDTOs;
         }
     }
 
