@@ -3,7 +3,6 @@ package nl.sogyo.financialApp.controller;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -201,6 +200,15 @@ public class FinancialAppController{
         Instant instant = Instant.parse(transactionDTO.getTimestamp());
         LocalDateTime newTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         System.out.println(newTime);
+        AccountDTO account = accountDAO.getAccountDTOWithId(accountId);
+        System.out.println(account.getUserId());
+        if (transactionDTO.getType().equalsIgnoreCase("expense") && (account.getBalance() - Double.parseDouble(transactionDTO.getAmount()) <= 5.00)){
+            System.out.println("in trying to send a email");
+            User user = userDAO.getUserWithId(account.getUserId());
+            System.out.println(user.toString());
+            user.sendEmail();
+            System.out.println("Send email to: " + user.getEmail());
+        }
         transactionDTO.setLocaldatetime(newTime);
         transactionDTO.setAccountId(accountId);
         transactionDAO.save(transactionDTO, accountId);

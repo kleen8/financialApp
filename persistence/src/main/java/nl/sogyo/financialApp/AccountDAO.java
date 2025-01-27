@@ -97,6 +97,22 @@ public class AccountDAO implements IAccountDAO{
     }
 
     @Override
+    public AccountDTO getAccountDTOWithId(int accountId){
+        try (Connection conn = DatabaseConnection.getConnection()) {
+           PreparedStatement stmt = conn.prepareStatement(findAccountById);
+            stmt.setInt(1 , accountId);
+            try (ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    return mapToAccountDto(rs);
+                }
+                else { return null; }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public void delete(int accountId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(deleteAccountWithId);
@@ -209,12 +225,19 @@ public class AccountDAO implements IAccountDAO{
     }
 
     private AccountDTO mapToAccountDto(ResultSet resultSet){
+        AccountDTO accountDTO = new AccountDTO();
         try {
             String account_name = resultSet.getString("account_name");
             String account_type = resultSet.getString("account_type");
             double balance = resultSet.getDouble("balance");
             int accountId = resultSet.getInt("id");
-            return new AccountDTO(account_name, account_type, balance, accountId);
+            int userId = resultSet.getInt("user_id");
+            accountDTO.setUserId(userId);
+            accountDTO.setBalance(balance);
+            accountDTO.setAccountId(accountId);
+            accountDTO.setAccountName(account_name);
+            accountDTO.setAccountType(account_type);
+            return accountDTO;
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
