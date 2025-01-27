@@ -48,8 +48,12 @@
 </script>
 
 <main>
-
+    <div class="header">
     <p1>Welcome to you finance app</p1>
+    </div>
+
+    <div class="login-block">
+        <p1>Login here!</p1>
     <form on:submit|preventDefault={handleLogin} class="login-form">
         <input type="text" placeholder="Username" bind:value={username} />
         <input id="password" type="password" placeholder="Password" bind:value={password} />
@@ -61,10 +65,21 @@
 
     <p>Dont have an account?</p>
     <button on:click={() => push('/CreateAccount')}>Create One Here</button>
+    </div>
 
 </main>
 
 <style>
+.header {
+    margin-top: 0%;
+    font-size: 50px;
+}
+
+.login-block {
+    margin-top: 5%;
+}
+
+
 .login-form {
     display: flex;
     flex-direction: column; /* Stack elements vertically */

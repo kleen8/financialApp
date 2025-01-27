@@ -21,25 +21,36 @@
 </script>
 
 <main>
-    
+
     <div id="header">
         <h1>Welcome to Your Financial App</h1>
         <p>Manage your accounts, incomes, and expenses easily.</p>
     </div>
 
-    <GetAccounts />
+    <div class="accounts-display">
+        <GetAccounts />
+    </div>
     
-    <AddAccount />
+    <div class="add-account-button">
+        <AddAccount />
+    </div>
 
     <div class="logout-button">
         <LogoutUser />
     </div>
+
 </main>
 
 <style>
 
-    .logout-button {
-        position: relative;
-        margin-top: 5%;
-    }
+.accounts-display{
+    display: inline-block;
+    width: 40rem;
+}
+
+.logout-button {
+    position: relative;
+    margin-top: 5%;
+}
+
 </style>

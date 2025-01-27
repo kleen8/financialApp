@@ -210,13 +210,9 @@ public class FinancialAppController{
     @GetMapping("/get-all-transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        System.out.println("In get all transactionDTO");
         List<TransactionDTO> transactionDTOs = transactionDAO.getTransactionByIdDescOrd(accountId);
         transactionDTOs.addAll(recurrentTransactionDAO.getRecTransForAccInTransDTO(accountId));
         transactionDTOs.sort(Comparator.comparing(TransactionDTO::getTimestamp));
-        for (TransactionDTO trns : transactionDTOs){
-            System.out.println(trns.getTimestamp() + " for transaction: " + trns.getCategory());
-        };
         Collections.reverse(transactionDTOs);
         return ResponseEntity.ok(transactionDTOs);
     }
