@@ -12,6 +12,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
 
     private static final String saveRecurringTransactionQry = """
@@ -32,6 +35,11 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private static final String checkRecurringTransactionDTOQry = """
     SELECT * FROM recurring_transactions
     WHERE transaction_id = ?;
+    """;
+
+    private static final String getRecTransForAccId = """
+    SELECT * FROM recurring_transactions
+    WHERE account_id = ? AND is_completed = true;
     """;
 
     private static final String updateEntryThatItIsDoneQry = """
@@ -55,8 +63,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     @Override
     public void saveRecTrans(TransactionDTO transactionDTO){
         try (Connection conn = DatabaseConnection.getConnection()) {
+            System.out.println("Trying to save a recurring transaction");
             insertUpdatedRecurringTransaction(conn, transactionDTO);
-            System.out.println("Transaction already exists so we have to wait for it to be completed");
         } catch (Exception e) {
             e.printStackTrace();
         } 
@@ -113,6 +121,25 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     }
 
     @Override
+    public List<TransactionDTO> getRecTransForAccInTransDTO(int account_id){
+            List<TransactionDTO> transactionDTOs = new ArrayList<TransactionDTO>();
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            try(PreparedStatement stmt = conn.prepareStatement(getRecTransForAccId)){
+                stmt.setInt(1, account_id);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()){
+                    TransactionDTO trns = mapRecTransToTransDTO(rs);
+                    transactionDTOs.add(trns);
+                }
+                return transactionDTOs;            
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return transactionDTOs;
+        }
+    }
+
+    @Override
     public List<RecurrentTransactionDTO> getAllRecurrentTransactionDTOs(){
         List<RecurrentTransactionDTO> transactionDTOs = new ArrayList<RecurrentTransactionDTO>();
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -162,6 +189,12 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
         TransactionDTO trns = new TransactionDTO();
         try {
             trns.setRecurrent(true);
+            trns.setType(rs.getString("type"));
+            trns.setAccountId(rs.getInt("account_id"));
+            trns.setTransactionId(rs.getInt("transaction_id"));
+            trns.setAmount(String.valueOf(rs.getDouble("amount")));
+            trns.setCategory(rs.getString("category"));
+            trns.setTimestamp(rs.getTimestamp("next_execution_date").toString());
             return trns;
         } catch (Exception e) {
             e.printStackTrace();
@@ -270,10 +303,11 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             stmt.setString(2, transactionDTO.getType());
             stmt.setInt(3, transactionDTO.getTransactionId());
             LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime(), transactionDTO.getTimeInterval());
-            System.out.println(LocalDateTime.now().toString());
             LocalDateTime localDateTime = LocalDateTime.now();
-            stmt.setTimestamp(3, Timestamp.valueOf(nextTime));
-            stmt.setTimestamp(4, Timestamp.valueOf(localDateTime));
+            stmt.setTimestamp(4, Timestamp.valueOf(nextTime));
+            stmt.setTimestamp(5, Timestamp.valueOf(localDateTime));
+            stmt.setString(6, transactionDTO.getCategory());
+            stmt.setInt(7, transactionDTO.getAccountId());
             stmt.executeUpdate();
         }
     }

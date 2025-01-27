@@ -41,15 +41,7 @@ public class NightlyJob implements Job {
                                 || rTrns.getNext_execution_date().withHour(0).withMinute(0).withSecond(0).withNano(0)
                                     .isEqual(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0)))
                                 && !rTrns.getIs_completed()){
-                            System.out.println("Transaction should be done for transaction with id: " + trns.getTransactionId());   
-                            System.out.println(trns.getAccountId());
-                            Account account = accountDAO.getAccountWithId(trns.getAccountId());
-                            System.out.println("Account is: " + account.toString() + " With balance: " 
-                                + account.getBalance());
                             Transaction transaction = transactionDAO.getTransaction(trns.getTransactionId());
-                            account.addTransaction(transaction); 
-                            account.processRecurrentTransactions();
-                            System.out.println("Account object new balance is: " + account.getBalance());
                             Double currentBalance = accountDAO.getAccountBalance(trns.getAccountId());
                             Double transactionAmount = transactionDAO.getTransactionAmount(trns.getTransactionId());
                             String type = transactionDAO.getTransactionType(trns.getTransactionId());
@@ -63,8 +55,11 @@ public class NightlyJob implements Job {
                                 System.out.println("Is Expense");
                             }
                             System.out.println("New balance after transaction is: " + currentBalance);
-                            accountDAO.updateBalance(trns.getAccountId(), currentBalance); recurrentTransactionDAO.updateRecTransIsComplete(rTrns.getId()); 
                             trns.setTimestamp(rTrns.getNext_execution_date().withHour(0).withMinute(0).withSecond(1).toString());
+                            trns.setLocaldatetime(rTrns.getNext_execution_date());
+                            System.out.println("Trying to save new rec transaction");
+                            accountDAO.updateBalance(trns.getAccountId(), currentBalance);
+                            recurrentTransactionDAO.updateRecTransIsComplete(rTrns.getId()); 
                             recurrentTransactionDAO.saveRecTrans(trns);
                         }
                     }

@@ -14,7 +14,7 @@ public class RecurrentTransactionDTO {
    private Boolean is_completed;
    private LocalDateTime created_at;
    private LocalDateTime updated_at;
-   private String catergoy;
+   private String category;
    private int account_id;
    private String timeInterval;
 
@@ -92,11 +92,11 @@ public class RecurrentTransactionDTO {
 	public void setUpdated_at(LocalDateTime updated_at) {
 		this.updated_at = updated_at;
 	}
-	public String getCatergoy() {
-		return catergoy;
+	public String getCategory() {
+		return category;
 	}
-	public void setCatergoy(String catergoy) {
-		this.catergoy = catergoy;
+	public void setCategory(String catergory) {
+		this.category = catergory;
 	}
 	public int getAccount_id() {
 		return account_id;

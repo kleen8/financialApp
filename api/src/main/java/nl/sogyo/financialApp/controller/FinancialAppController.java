@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,13 +31,16 @@ public class FinancialAppController{
     private final HttpSession session;
     private final IAccountDAO accountDAO; 
     private final ITransactionDAO transactionDAO;
+    private final IRecurrentTransactionDAO recurrentTransactionDAO;
 
     @Autowired
-    public FinancialAppController(IUserDAO userDAO, ITransactionDAO transactionDAO, IAccountDAO accountDAO, HttpSession session){
+    public FinancialAppController(IUserDAO userDAO, ITransactionDAO transactionDAO,
+        IAccountDAO accountDAO, HttpSession session, IRecurrentTransactionDAO recurrentTransactionDAO){
         this.userDAO = userDAO;
         this.accountDAO = accountDAO;
         this.session = session;
         this.transactionDAO = transactionDAO;
+        this.recurrentTransactionDAO = recurrentTransactionDAO;
     }
 
      
@@ -205,7 +210,15 @@ public class FinancialAppController{
     @GetMapping("/get-all-transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        return ResponseEntity.ok(transactionDAO.getTransactionByIdDescOrd(accountId));
+        System.out.println("In get all transactionDTO");
+        List<TransactionDTO> transactionDTOs = transactionDAO.getTransactionByIdDescOrd(accountId);
+        transactionDTOs.addAll(recurrentTransactionDAO.getRecTransForAccInTransDTO(accountId));
+        transactionDTOs.sort(Comparator.comparing(TransactionDTO::getTimestamp));
+        for (TransactionDTO trns : transactionDTOs){
+            System.out.println(trns.getTimestamp() + " for transaction: " + trns.getCategory());
+        };
+        Collections.reverse(transactionDTOs);
+        return ResponseEntity.ok(transactionDTOs);
     }
 
 }

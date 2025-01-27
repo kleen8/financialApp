@@ -11,5 +11,6 @@ public interface IRecurrentTransactionDAO {
     void updateRecTransIsComplete(int recurrentTransId);
     void saveRecTrans(TransactionDTO transactionDTO);
     Boolean checkIfRecurringTransactionExists(int transactionId);
+    List<TransactionDTO> getRecTransForAccInTransDTO(int account_id);
 }
 
