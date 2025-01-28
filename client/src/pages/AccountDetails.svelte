@@ -85,9 +85,7 @@ function pushToHomePage() {
     <GetTransaction />
     <AddTransaction />
 
-    <div class="delete-button-div">
     <button class="delete-button" type="button" on:click={deleteAccount} >Delete Account</button>
-    </div>
 
 </main>
 
@@ -119,13 +117,10 @@ function pushToHomePage() {
         justify-content: start;
     }
 
-    .delete-button-div{
-     z-index: 500;
-    }
-
     .delete-button{
      position: relative;
      margin-top: 5%;
+     z-index: 1;
     }
 
    .header .logout-button {
