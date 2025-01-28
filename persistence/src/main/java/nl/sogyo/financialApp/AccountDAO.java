@@ -259,7 +259,8 @@ public class AccountDAO implements IAccountDAO{
         }
     }
 
-    protected void updateBalance(Connection connection, int accountId, double delta) {
+    @Override
+    public void updateBalance(Connection connection, int accountId, double delta) {
         try (PreparedStatement stmt = connection.prepareStatement(updateAccountBalanceQry)){
             stmt.setDouble(1, delta);
             stmt.setInt(2, accountId);

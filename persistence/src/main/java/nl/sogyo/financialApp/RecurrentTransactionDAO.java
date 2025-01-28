@@ -61,13 +61,13 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     }
 
     @Override
-    public void saveRecTrans(TransactionDTO transactionDTO){
-        try (Connection conn = DatabaseConnection.getConnection()) {
+    public void saveRecTrans(Connection conn, TransactionDTO transactionDTO){
             System.out.println("Trying to save a recurring transaction");
-            insertUpdatedRecurringTransaction(conn, transactionDTO);
+        try {
+        insertUpdatedRecurringTransaction(conn, transactionDTO);
         } catch (Exception e) {
-            e.printStackTrace();
-        } 
+           e.printStackTrace(); 
+        }
     }
 
     @Override
@@ -251,12 +251,10 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     }
     
     @Override
-    public void updateRecTransIsComplete(int recurrentTransId){
-        try (Connection conn = DatabaseConnection.getConnection()) {
+    public void updateRecTransIsComplete(Connection conn, int recurrentTransId){
             try (PreparedStatement updateStmt = conn.prepareStatement(updateEntryThatItIsDoneQry)){
                 updateStmt.setInt(1, recurrentTransId);
                 updateStmt.executeUpdate();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
