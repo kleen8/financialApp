@@ -11,8 +11,25 @@ public class TransactionDTO {
     private Boolean recurrent;
     private String timeInterval;
     private String timestamp;
-    
+    private String balance_before;
+    private String balance_after;
     private LocalDateTime localdatetime;
+
+    public String getBalance_before() {
+		return balance_before;
+	}
+
+	public void setBalance_before(String balance_before) {
+		this.balance_before = balance_before;
+	}
+
+	public String getBalance_after() {
+		return balance_after;
+	}
+
+	public void setBalance_after(String balance_after) {
+		this.balance_after = balance_after;
+	}
 
 	public LocalDateTime getLocaldatetime() {
 		return localdatetime;

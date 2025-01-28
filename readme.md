@@ -75,7 +75,7 @@ CREATE TABLE transactions (
     type TEXT NOT NULL,
     amount NUMERIC(15, 2) NOT NULL,
     balance_before NUMERIC(15,2) NOT NULL,
-    balance_after NUMBERIC(15,2) NOT NULL,
+    balance_after NUMERIC(15,2) NOT NULL,
     category TEXT NOT NULL,
     recurrent BOOLEAN NOT NULL DEFAULT FALSE,
     time_interval TEXT DEFAULT NULL,

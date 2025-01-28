@@ -27,8 +27,8 @@ public class TransactionDAO implements ITransactionDAO{
      */
 
     private static final String saveTransactionQry = """
-    INSERT INTO transactions ( type, amount, category, recurrent, time_interval, timestamp, account_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO transactions ( type, amount ,balance_before, balance_after, category, recurrent, time_interval, timestamp, account_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     """;
 
     private static final String getAllTransactionsWithAccIdQry = """
@@ -206,19 +206,23 @@ public class TransactionDAO implements ITransactionDAO{
         System.out.println("Trying to save a transaction, in the DAO");
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
+            AccountDAO accountDAO = new AccountDAO();
             PreparedStatement stmt = connection.prepareStatement(saveTransactionQry);
-            stmt.setString(1, transactionDTO.getType());
-            stmt.setDouble(2, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setString(3, transactionDTO.getCategory());
-            stmt.setBoolean(4, transactionDTO.getRecurrent());
-            stmt.setString(5, transactionDTO.getTimeInterval());
-            stmt.setTimestamp(6, Timestamp.valueOf(transactionDTO.getLocaldatetime()));
-            stmt.setInt(7, transactionDTO.getAccountId());
-            stmt.executeUpdate();
+            Double currentBalance = accountDAO.getAccountBalance(accountId);
             double delta = transactionDTO.getType().equalsIgnoreCase("income")
             ? Double.parseDouble(transactionDTO.getAmount())
             : -Double.parseDouble(transactionDTO.getAmount());
-            AccountDAO accountDAO = new AccountDAO();
+            Double newBalance = currentBalance + delta;
+            stmt.setString(1, transactionDTO.getType());
+            stmt.setDouble(2, Double.parseDouble(transactionDTO.getAmount()));
+            stmt.setDouble(3, currentBalance);
+            stmt.setDouble(4, newBalance);
+            stmt.setString(5, transactionDTO.getCategory());
+            stmt.setBoolean(6, transactionDTO.getRecurrent());
+            stmt.setString(7, transactionDTO.getTimeInterval());
+            stmt.setTimestamp(8, Timestamp.valueOf(transactionDTO.getLocaldatetime()));
+            stmt.setInt(9, transactionDTO.getAccountId());
+            stmt.executeUpdate();
             accountDAO.updateBalance(connection, accountId, delta);
             connection.commit();
             connection.setAutoCommit(true);
@@ -331,6 +335,8 @@ public class TransactionDAO implements ITransactionDAO{
             int id = resultSet.getInt("id");
             String type = resultSet.getString("type");
             double amount = resultSet.getDouble("amount");
+            double currentBalance = resultSet.getDouble("balance_before");
+            double balance_after = resultSet.getDouble("balance_after");
             String category = resultSet.getString("category");
             Boolean recurrent = resultSet.getBoolean("recurrent");
             String timeInterval = resultSet.getString("time_interval");
@@ -346,6 +352,8 @@ public class TransactionDAO implements ITransactionDAO{
             transactionDTO.setTimeInterval(timeInterval);
             transactionDTO.setTimestamp(timestamp);
             transactionDTO.setLocaldatetime(newTime);
+            transactionDTO.setBalance_after(String.valueOf(balance_after));
+            transactionDTO.setBalance_before(String.valueOf(currentBalance));
             return transactionDTO;
         } catch (Exception e) {
             e.printStackTrace();
