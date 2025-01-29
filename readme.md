@@ -74,10 +74,30 @@ CREATE TABLE transactions (
     id SERIAL PRIMARY KEY,
     type TEXT NOT NULL,
     amount NUMERIC(15, 2) NOT NULL,
+    balance_before NUMERIC(15,2) NOT NULL,
+    balance_after NUMERIC(15,2) NOT NULL,
     category TEXT NOT NULL,
     recurrent BOOLEAN NOT NULL DEFAULT FALSE,
     time_interval TEXT DEFAULT NULL,
-    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    timestamp TIMESTAMP NOT NULL DEFAULT NOW(),
     account_id INTEGER NOT NULL,
+    CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
+);
+
+CREATE TABLE recurring_transactions (
+    id SERIAL PRIMARY KEY,
+    amount NUMERIC(15, 2) NOT NULL,
+    balance_before NUMERIC(15,2) NOT NULL,
+    balance_after NUMERIC(15,2) NOT NULL,
+    type TEXT NOT NULL,
+    transaction_id INT NOT NULL,
+    next_execution_date TIMESTAMP NOT NULL,
+    last_execution_date TIMESTAMP,
+    category TEXT NOT NULL,
+    account_id INT NOT NULL,
+    is_completed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE,
     CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE
 );

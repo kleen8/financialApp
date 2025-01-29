@@ -35,6 +35,19 @@ services:
       - database.env
     volumes:
       - db-data:/var/lib/postgresql/data # Persist the database data
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: scheduler/Dockerfile
+    env_file:
+      - database.env
+    depends_on:
+      - database
+      - backend
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

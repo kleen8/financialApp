@@ -1,16 +1,24 @@
 package nl.sogyo.financialApp;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Account {
 
     private String accountName;
     private double balance;
     private User owner;
+    protected List<Transaction> transactions = new ArrayList<Transaction>();
     
     public Account(String accountName, User owner, double balance){
         this.accountName = accountName;
         this.balance = balance;
         this.owner = owner;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction);
     }
 
     public String getAccountName(){
@@ -36,7 +44,8 @@ public abstract class Account {
             balance-=amount;
         }
     }
-    
+   
+    public abstract void processRecurrentTransactions();
     public abstract boolean transfer(double amount, Account targerAccount);
     public abstract AccountType getAccountType();
 }

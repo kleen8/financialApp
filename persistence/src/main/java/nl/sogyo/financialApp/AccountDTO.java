@@ -5,8 +5,10 @@ public class AccountDTO {
 	private String accountName;
     private String accountType;
 	private double balance;
+    private int userId;
 
-    public AccountDTO(){}
+
+	public AccountDTO(){}
 
     public AccountDTO(String accountName, String accountType, double balance, int accountId){
         this.accountName = accountName;
@@ -21,6 +23,13 @@ public class AccountDTO {
         this.balance = balance;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
     public String getAccountName() {
 		return accountName;
 	}

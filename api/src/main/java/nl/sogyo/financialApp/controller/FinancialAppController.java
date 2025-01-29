@@ -1,5 +1,10 @@
 package nl.sogyo.financialApp.controller;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,20 +30,22 @@ public class FinancialAppController{
     private final HttpSession session;
     private final IAccountDAO accountDAO; 
     private final ITransactionDAO transactionDAO;
+    private final IRecurrentTransactionDAO recurrentTransactionDAO;
 
     @Autowired
-    public FinancialAppController(IUserDAO userDAO, ITransactionDAO transactionDAO, IAccountDAO accountDAO, HttpSession session){
+    public FinancialAppController(IUserDAO userDAO, ITransactionDAO transactionDAO,
+        IAccountDAO accountDAO, HttpSession session, IRecurrentTransactionDAO recurrentTransactionDAO){
         this.userDAO = userDAO;
         this.accountDAO = accountDAO;
         this.session = session;
         this.transactionDAO = transactionDAO;
+        this.recurrentTransactionDAO = recurrentTransactionDAO;
     }
 
      
     @GetMapping("/hello")
     public String sayHello(){
         Object userEmail = session.getAttribute("userEmail");
-        System.out.println(userDAO.doesUserExist((String) userEmail));
         return "Hello";
     }
 
@@ -67,6 +74,29 @@ public class FinancialAppController{
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
         }
+    }
+
+    @PostMapping("/logout-user")
+    public ResponseEntity<String> logoutUser(HttpSession session){
+        if (session != null){
+            session.invalidate();
+            return ResponseEntity.ok("Logged out user");
+        } else {
+            return ResponseEntity.ok("Didn't work");
+        }
+    }
+
+    @PostMapping("/delete-account")
+    public ResponseEntity<String> deleteAccount(HttpSession session){
+        try {
+            Integer accountId = (Integer) session.getAttribute("accountId");
+            accountDAO.delete(accountId);
+            return ResponseEntity.ok("in delete account");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error");
+        }
+
     }
 
     @PostMapping("/login-user")
@@ -101,7 +131,6 @@ public class FinancialAppController{
     @PostMapping("/create-account")
     public ResponseEntity<AccountDTO> addAccount(@RequestBody AccountDTO accountDTO) {
         try {
-            System.out.println("In create account");
             String userId = (String) session.getAttribute("userId");
             int userIdInt = Integer.parseInt(userId);
             User user = userDAO.getUserWithId(userIdInt);
@@ -124,8 +153,6 @@ public class FinancialAppController{
             }
             if (account != null){
                 accountDTO.setAccountId(accountDAO.saveAndReturnId(account, userIdInt));
-                System.out.println("Account balance is: " + accountDTO.getBalance());
-                System.out.println("Account id is: " + accountDTO.getAccountId());
                 return ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {
@@ -138,7 +165,6 @@ public class FinancialAppController{
     @GetMapping("/get-account-balance")
     public ResponseEntity<Double> getAccountBalance(){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        System.out.println(accountId);
         return ResponseEntity.ok(accountDAO.getAccountBalance(accountId));
     }
 
@@ -164,6 +190,14 @@ public class FinancialAppController{
     @PostMapping("/post-transaction")
     public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
+        Instant instant = Instant.parse(transactionDTO.getTimestamp());
+        LocalDateTime newTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        AccountDTO account = accountDAO.getAccountDTOWithId(accountId);
+        if (transactionDTO.getType().equalsIgnoreCase("expense") && (account.getBalance() - Double.parseDouble(transactionDTO.getAmount()) <= 5.00)){
+            User user = userDAO.getUserWithId(account.getUserId());
+            //user.sendEmail();
+        }
+        transactionDTO.setLocaldatetime(newTime);
         transactionDTO.setAccountId(accountId);
         transactionDAO.save(transactionDTO, accountId);
         return ResponseEntity.ok(transactionDTO);
@@ -172,7 +206,11 @@ public class FinancialAppController{
     @GetMapping("/get-all-transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransaction(HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        return ResponseEntity.ok(transactionDAO.getAllTransactionDTOWitAccId(accountId));
+        List<TransactionDTO> transactionDTOs = transactionDAO.getTransactionByIdDescOrd(accountId);
+        transactionDTOs.addAll(recurrentTransactionDAO.getRecTransForAccInTransDTO(accountId));
+        transactionDTOs.sort(Comparator.comparing(TransactionDTO::getTimestamp));
+        Collections.reverse(transactionDTOs);
+        return ResponseEntity.ok(transactionDTOs);
     }
 
 }

@@ -22,4 +22,10 @@ public class InvestmentsAccount extends Account{
 	public AccountType getAccountType() {
         return AccountType.INVESTMENTS;
 	}
+
+	@Override
+	public void processRecurrentTransactions() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'processRecurrentTransactions'");
+	}
 }

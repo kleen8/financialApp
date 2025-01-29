@@ -1,15 +1,13 @@
 <script>
 
-    import Router, { push } from "svelte-spa-router";
+    import Router from "svelte-spa-router";
     import LoginPage from "./pages/LoginPage.svelte";
     import CreateAccount from "./pages/CreateAccount.svelte";
     import HomePage from "./pages/HomePage.svelte";
-    import DevelopmentPage from "./pages/DevelopmentPage.svelte";
     import AccuntDetails from "./pages/AccountDetails.svelte";
-    import { checkLoginStatus, isAuthenticated } from "./stores/stores";
+    import { checkLoginStatus } from "./stores/stores";
     import { onMount } from "svelte";
     const routes = {
-        '/dev' : DevelopmentPage,
         '/' : LoginPage,
         '/CreateAccount' : CreateAccount,
         '/home' : HomePage,

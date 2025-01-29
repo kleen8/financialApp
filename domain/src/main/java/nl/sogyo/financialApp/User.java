@@ -57,6 +57,10 @@ public class User {
     public void addAccount(Account account){
         accounts.add(account);
     }
+    
+    public void sendEmail(){
+        SendEmail.sendMail(getEmail());
+    }
 
     public List<Account> getAccounts(){
         return accounts;
@@ -80,7 +84,7 @@ public class User {
         return firstName;
     }
     
-    protected String getEmail(){
+    public String getEmail(){
         return email;
     }
 

@@ -1,27 +1,13 @@
 package nl.sogyo.financialApp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GeneralAccount extends Account{
 
-    protected List<Expense> expenses = new ArrayList<Expense>();
-    protected List<Income> incomes = new ArrayList<Income>();
-    protected List<Transaction> transactions = new ArrayList<Transaction>();
     
     public GeneralAccount(String accountName, User owner, double balance){
             super(accountName, owner, balance);
-    }
-
-    public void addIncome(Income income) {
-        incomes.add(income);
-        deposit(income.getAmount());
-    }
-
-    public void addExpense(Expense expense) {
-        expenses.add(expense);
-        withdraw(expense.getAmount());
     }
 
     private boolean shouldProcessTransaction(Transaction transaction, LocalDateTime now){

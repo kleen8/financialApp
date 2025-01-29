@@ -4,8 +4,6 @@ import { push } from 'svelte-spa-router';
 
 let error = null;
 
-
-
 const fetchAccounts = async () => {
     try {
         const response = await fetch('/api/get-accounts')
@@ -44,11 +42,14 @@ async function handleButtonClick(account) {
 </script>
 
 <style>
+
 .account-list {
-    margin: 20px;
+    margin: auto;
     padding: 0;
     list-style: none;
+    overflow: auto;
 }
+
 .account-item {
     border: 1px solid #ddd;
     padding: 10px;
@@ -56,17 +57,27 @@ async function handleButtonClick(account) {
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .account-item h3 {
     margin: 0;
 }
+
 .account-item p {
     margin: 5px 0;
 }
+
+.account-list-container {
+    height: 50vh; /* Makes the container take up the full height of the viewport */
+    overflow: auto;
+}
+
 .error {
     font-weight: bold;
 }
+
 </style>
 
+<div class="account-list-container">
 {#if $accounts.length === 0}
     <p class="error">No accounts found. Create a new one!</p>
 {:else}
@@ -82,3 +93,5 @@ async function handleButtonClick(account) {
         {/each}
     </ul>
 {/if}
+
+</div>

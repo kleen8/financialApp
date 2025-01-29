@@ -10,7 +10,7 @@ COPY pom.xml .
 # RUN mvn dependency:go-offline
 
 # Package the app
-RUN mvn clean install
+RUN mvn install
 
 # Runtime stage with JDK 17 (no Maven needed here)
 FROM openjdk:17-jdk-slim

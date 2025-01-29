@@ -43,6 +43,11 @@ public class AccountDAO implements IAccountDAO{
     SET balance = balance + ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?;
     """;
+    private final String setAccountBalanceQry = """
+    UPDATE accounts
+    SET balance = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?;
+    """;
 
     private final String getAccountBalaceQry = """
     SELECT balance FROM accounts WHERE id = ?;
@@ -88,6 +93,22 @@ public class AccountDAO implements IAccountDAO{
         } catch (SQLException e) {
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
             throw new RuntimeException("Databse error occured");
+        }
+    }
+
+    @Override
+    public AccountDTO getAccountDTOWithId(int accountId){
+        try (Connection conn = DatabaseConnection.getConnection()) {
+           PreparedStatement stmt = conn.prepareStatement(findAccountById);
+            stmt.setInt(1 , accountId);
+            try (ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    return mapToAccountDto(rs);
+                }
+                else { return null; }
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -144,6 +165,7 @@ public class AccountDAO implements IAccountDAO{
     public Account getAccountWithId(int id) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(findAccountById);
+            stmt.setInt(1, id);
             try (ResultSet resultSet = stmt.executeQuery()){
                 if (resultSet.next()){
                     return mapToAccount(resultSet);
@@ -203,12 +225,19 @@ public class AccountDAO implements IAccountDAO{
     }
 
     private AccountDTO mapToAccountDto(ResultSet resultSet){
+        AccountDTO accountDTO = new AccountDTO();
         try {
             String account_name = resultSet.getString("account_name");
             String account_type = resultSet.getString("account_type");
             double balance = resultSet.getDouble("balance");
             int accountId = resultSet.getInt("id");
-            return new AccountDTO(account_name, account_type, balance, accountId);
+            int userId = resultSet.getInt("user_id");
+            accountDTO.setUserId(userId);
+            accountDTO.setBalance(balance);
+            accountDTO.setAccountId(accountId);
+            accountDTO.setAccountName(account_name);
+            accountDTO.setAccountType(account_type);
+            return accountDTO;
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
@@ -216,7 +245,22 @@ public class AccountDAO implements IAccountDAO{
         }
     }
 
-    protected void updateBalance(Connection connection, int accountId, double delta) {
+    @Override
+    public void updateBalance(int accountId, double delta) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (PreparedStatement stmt = conn.prepareStatement(setAccountBalanceQry)){
+            stmt.setDouble(1, delta);
+            stmt.setInt(2, accountId);
+            stmt.executeUpdate();
+            }
+        } catch (Exception e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Error updating account balance" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateBalance(Connection connection, int accountId, double delta) {
         try (PreparedStatement stmt = connection.prepareStatement(updateAccountBalanceQry)){
             stmt.setDouble(1, delta);
             stmt.setInt(2, accountId);

@@ -39,6 +39,7 @@
     <module>domain</module>
     <module>persistence</module>
     <module>api</module>
+    <module>scheduler</module>
   </modules>
 
   <build>
