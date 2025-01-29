@@ -10,12 +10,6 @@ public class SendEmail {
     static final String password = System.getenv("emailPass");
 
     static public void sendMail(String receivingEmail){
-         // Setup mail server properties
-        
-        System.out.println(username);
-        System.out.println(password);
-
-
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -44,7 +38,6 @@ public class SendEmail {
             // Send the email
             Transport.send(message);
 
-            System.out.println("Email sent successfully!");
         } catch (MessagingException e) {
             e.printStackTrace();
         }

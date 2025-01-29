@@ -46,7 +46,6 @@ public class FinancialAppController{
     @GetMapping("/hello")
     public String sayHello(){
         Object userEmail = session.getAttribute("userEmail");
-        System.out.println(userDAO.doesUserExist((String) userEmail));
         return "Hello";
     }
 
@@ -90,7 +89,6 @@ public class FinancialAppController{
     @PostMapping("/delete-account")
     public ResponseEntity<String> deleteAccount(HttpSession session){
         try {
-            System.out.println("in delete account, accound id is: " + session.getAttribute("accountId"));
             Integer accountId = (Integer) session.getAttribute("accountId");
             accountDAO.delete(accountId);
             return ResponseEntity.ok("in delete account");
@@ -133,7 +131,6 @@ public class FinancialAppController{
     @PostMapping("/create-account")
     public ResponseEntity<AccountDTO> addAccount(@RequestBody AccountDTO accountDTO) {
         try {
-            System.out.println("In create account");
             String userId = (String) session.getAttribute("userId");
             int userIdInt = Integer.parseInt(userId);
             User user = userDAO.getUserWithId(userIdInt);
@@ -156,8 +153,6 @@ public class FinancialAppController{
             }
             if (account != null){
                 accountDTO.setAccountId(accountDAO.saveAndReturnId(account, userIdInt));
-                System.out.println("Account balance is: " + accountDTO.getBalance());
-                System.out.println("Account id is: " + accountDTO.getAccountId());
                 return ResponseEntity.ok(accountDTO);
             }
         } catch (Exception e) {
@@ -170,7 +165,6 @@ public class FinancialAppController{
     @GetMapping("/get-account-balance")
     public ResponseEntity<Double> getAccountBalance(){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        System.out.println(accountId);
         return ResponseEntity.ok(accountDAO.getAccountBalance(accountId));
     }
 
@@ -196,18 +190,12 @@ public class FinancialAppController{
     @PostMapping("/post-transaction")
     public ResponseEntity<TransactionDTO> postTransaction(@RequestBody TransactionDTO transactionDTO, HttpSession session){
         Integer accountId = (Integer) session.getAttribute("accountId");
-        System.out.println("transactionDTO timestamp:  " + transactionDTO.getTimestamp());
         Instant instant = Instant.parse(transactionDTO.getTimestamp());
         LocalDateTime newTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        System.out.println(newTime);
         AccountDTO account = accountDAO.getAccountDTOWithId(accountId);
-        System.out.println(account.getUserId());
         if (transactionDTO.getType().equalsIgnoreCase("expense") && (account.getBalance() - Double.parseDouble(transactionDTO.getAmount()) <= 5.00)){
-            System.out.println("in trying to send a email");
             User user = userDAO.getUserWithId(account.getUserId());
-            System.out.println(user.toString());
-            user.sendEmail();
-            System.out.println("Send email to: " + user.getEmail());
+            //user.sendEmail();
         }
         transactionDTO.setLocaldatetime(newTime);
         transactionDTO.setAccountId(accountId);

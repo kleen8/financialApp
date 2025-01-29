@@ -56,7 +56,7 @@ public class NightlyJob implements Job {
                 User user = userDAO.getUserWithId(accountDTO.getUserId());
                 getTransactionInformation(trns);
                 currentBalance = calculateBalance(type, currentBalance, transactionAmount);
-                checkIfEmailNeedsToBeSend(currentBalance, type, user);
+                //checkIfEmailNeedsToBeSend(currentBalance, type, user);
                 trns = updateTransactionDTO(trns, rTrns);
                 updateDatabase(trns, rTrns, currentBalance);
             }

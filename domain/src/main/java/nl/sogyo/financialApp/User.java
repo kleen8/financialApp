@@ -59,7 +59,6 @@ public class User {
     }
     
     public void sendEmail(){
-        System.out.println("In send email user domain class");
         SendEmail.sendMail(getEmail());
     }
 

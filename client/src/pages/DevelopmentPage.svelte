@@ -1,6 +1,7 @@
 <script>
   import { onMount, onDestroy } from "svelte";
   import { Chart, registerables } from "chart.js";
+    import { transactions } from "../stores/stores";
 
   Chart.register(...registerables);
 
@@ -11,10 +12,10 @@
    let balances = [1000, 1200, 1400, 1600, 1800]; // Balance values
    let dates = ["Jan", "Feb", "Mar", "Apr", "May"]; // Corresponding X-axis labels
 
-  onMount(() => {
+
+   onMount(async () => {
     // Destroy any existing chart to avoid duplication
     if (chart) chart.destroy();
-
     // Create a new chart
     chart = new Chart(canvas, {
       type: "line",
@@ -56,10 +57,20 @@
     });
   });
 
+  async function getBalanceData(){
+      const response = await fetch('/api/get-all-transactions') 
+      const fetchedTransactions = await response.json();
+      console.log("fetched transactions are: " , fetchedTransactions);
+      transactions.set(fetchedTransactions)
+
+    }
+
+  console.log("transactions are: " , transactions);
   // Cleanup the chart instance when the component is destroyed
   onDestroy(() => {
     if (chart) chart.destroy();
   });
+
 </script>
 
 <canvas bind:this={canvas}></canvas>

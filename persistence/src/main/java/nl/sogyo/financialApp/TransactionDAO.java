@@ -27,7 +27,7 @@ public class TransactionDAO implements ITransactionDAO{
      */
 
     private static final String saveTransactionQry = """
-    INSERT INTO transactions ( type, amount ,balance_before, balance_after, category, recurrent, time_interval, timestamp, account_id) 
+    INSERT INTO transactions (type, amount, balance_before, balance_after, category, recurrent, time_interval, timestamp, account_id) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     """;
 
@@ -149,7 +149,6 @@ public class TransactionDAO implements ITransactionDAO{
     
     @Override
     public List<Transaction> getAllRecurrentTransactions() {
-        System.out.println("Gathering all transactions");
         List<Transaction> transactionsList = new ArrayList<Transaction>();
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(getAllRecurrentTransactionsQry);
@@ -184,7 +183,6 @@ public class TransactionDAO implements ITransactionDAO{
     }
 
     public List<Transaction> getAllTransactions() {
-        System.out.println("Gathering all transactions");
         List<Transaction> transactionsList = new ArrayList<Transaction>();
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(getAllTransactionsQry);
@@ -203,7 +201,6 @@ public class TransactionDAO implements ITransactionDAO{
 
     @Override
     public void save(TransactionDTO transactionDTO, int accountId) {
-        System.out.println("Trying to save a transaction, in the DAO");
         try (Connection connection = DatabaseConnection.getConnection()) {
             connection.setAutoCommit(false);
             AccountDAO accountDAO = new AccountDAO();
@@ -253,7 +250,6 @@ public class TransactionDAO implements ITransactionDAO{
 
     @Override
     public void updateTransaction(int transactionId, TransactionDTO transactionDTO) {
-        System.out.println("Trying to update transaction with ID: " + transactionId);
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(updateTransactionQry);
             stmt.setString(1, transactionDTO.getType());
@@ -276,16 +272,10 @@ public class TransactionDAO implements ITransactionDAO{
 
     @Override
     public void deleteTransaction(int transactionId) {
-        System.out.println("Trying to delete transaction with ID: " + transactionId);
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(deleteTransactionQry);
             stmt.setInt(1, transactionId);
             int rowsDeleted = stmt.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("Transaction deleted successfully.");
-            } else {
-                System.out.println("No transaction found with ID: " + transactionId);
-            }
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
@@ -295,15 +285,12 @@ public class TransactionDAO implements ITransactionDAO{
 
     @Override
     public TransactionDTO getTransactionDTOWitId(int transactionId){
-        System.out.println("Trying to get transaction with ID: " + transactionId);
         try (Connection connection = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(getTransactionWithId);
             stmt.setInt(1, transactionId);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
                     return mapToTransactionDTO(resultSet);
-                } else {
-                    System.out.println("No transaction found with ID: " + transactionId);
                 }
             }
         } catch (SQLException e) {

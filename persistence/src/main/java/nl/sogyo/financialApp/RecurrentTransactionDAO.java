@@ -19,8 +19,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
 
     private static final String saveRecurringTransactionQry = """
     INSERT INTO recurring_transactions
-    (amount, type, transaction_id, next_execution_date, last_execution_date, category, account_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?);
+    (amount, balance_before, balance_after, type, transaction_id, next_execution_date, last_execution_date, category, account_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     """;
 
     private static final String getRecurringTransactionQryId = """
@@ -54,7 +54,6 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     public void save(TransactionDTO transactionDTO){
         try (Connection conn = DatabaseConnection.getConnection()) {
             insertNewRecurringTransaction(conn, transactionDTO);
-            System.out.println("Transaction already exists so we have to wait for it to be completed");
         } catch (Exception e) {
             e.printStackTrace();
         } 
@@ -62,9 +61,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
 
     @Override
     public void saveRecTrans(Connection conn, TransactionDTO transactionDTO){
-            System.out.println("Trying to save a recurring transaction");
         try {
-        insertUpdatedRecurringTransaction(conn, transactionDTO);
+            insertUpdatedRecurringTransaction(conn, transactionDTO);
         } catch (Exception e) {
            e.printStackTrace(); 
         }
@@ -82,13 +80,10 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
                     transactionDTO.setTimestamp(nextExecutionDate2.format(
                         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
                     insertRecurringTransaction(conn, transactionDTO);
-                    System.out.println("Updated the database with a recurring transaction and set the old transaction to be completed");
                 }
             } else {
-                System.out.println("Inserted a new recurring transaction");
                 insertNewRecurringTransaction(conn, transactionDTO);
             }
-            System.out.println("Transaction already exists so we have to wait for it to be completed");
         } catch (Exception e) {
             e.printStackTrace();
         } 
@@ -96,8 +91,6 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     
     @Override
     public List<RecurrentTransactionDTO> getAllRecurrentTransactionDTOsId(int transactionId){
-        System.out.println("In get recurrent transaction dto's id is: " + transactionId);
-
         List<RecurrentTransactionDTO> transactionDTOs = new ArrayList<RecurrentTransactionDTO>();
         try (Connection conn = DatabaseConnection.getConnection()) {
             try(PreparedStatement stmt = conn.prepareStatement(getRecurringTransactionQryId)) {
@@ -105,7 +98,6 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()){
                     RecurrentTransactionDTO trns = mapToTransactionDTO(rs);
-                    System.out.println("from Rec Trans print rec trans: " + trns.getAmount());
                     transactionDTOs.add(trns);
                 }
                 if (transactionDTOs != null && transactionDTOs.size() > 0){
@@ -168,8 +160,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             trns.setId(rs.getInt("id"));
             trns.setAmount(rs.getDouble("amount"));
             trns.setType(rs.getString("type"));
-            //trns.setBalance_before(rs.getDouble("balance_before"));
-            //trns.setBalance_after(rs.getDouble("balance_after"));
+            trns.setBalance_before(rs.getDouble("balance_before"));
+            trns.setBalance_after(rs.getDouble("balance_after"));
             trns.setTransaction_id(rs.getInt("transaction_id"));
             trns.setNext_execution_date(rs.getTimestamp("next_execution_date").toLocalDateTime());
             trns.setLast_execution_date(rs.getTimestamp("last_execution_date").toLocalDateTime());
@@ -195,6 +187,8 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             trns.setAmount(String.valueOf(rs.getDouble("amount")));
             trns.setCategory(rs.getString("category"));
             trns.setTimestamp(rs.getTimestamp("next_execution_date").toString());
+            trns.setBalance_after(String.valueOf(rs.getDouble("balance_after")));
+            trns.setBalance_before(String.valueOf(rs.getDouble("balance_before")));
             return trns;
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,14 +260,14 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
             ResultSet rs = checkStmt.executeQuery();
             if (rs != null && rs.next()){
                 LocalDateTime nextExecutionDate = rs.getTimestamp("next_execution_date").toLocalDateTime();
-                if ((nextExecutionDate.isBefore(LocalDateTime.now()) || nextExecutionDate.isEqual(LocalDateTime.now()) 
+                if ((nextExecutionDate.isBefore(LocalDateTime.now()) 
+                || nextExecutionDate.isEqual(LocalDateTime.now()) 
                 && !rs.getBoolean("is_completed"))){
                     int recId = rs.getInt("id");
                     try (PreparedStatement updateStmt = conn.prepareStatement(updateEntryThatItIsDoneQry)){
                         updateStmt.setInt(1, recId);
                         updateStmt.executeUpdate();
                     }
-                    System.out.println("Recurring transaction date has passed and is set to be completed");
                     return nextExecutionDate;
                 }
             }
@@ -284,13 +278,18 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private void insertRecurringTransaction(Connection conn, TransactionDTO transactionDTO) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(saveRecurringTransactionQry)) {
             stmt.setDouble(1, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setString(2, transactionDTO.getType());
-            stmt.setInt(3, transactionDTO.getTransactionId());
+            stmt.setDouble(2, Double.parseDouble(transactionDTO.getBalance_before()));
+            stmt.setDouble(3, Double.parseDouble(transactionDTO.getBalance_after()));
+            stmt.setString(4, transactionDTO.getType());
+            stmt.setInt(5, transactionDTO.getTransactionId());
             LocalDateTime nextTime = transactionDTO.getLocaldatetime();
-            LocalDateTime newNextTime = calculateNextExecutionDateInDb(nextTime, transactionDTO.getTimeInterval());
-            stmt.setTimestamp(3, Timestamp.valueOf(newNextTime));
+            LocalDateTime newNextTime = calculateNextExecutionDateInDb(nextTime
+                , transactionDTO.getTimeInterval());
+            stmt.setTimestamp(6, Timestamp.valueOf(newNextTime));
             LocalDateTime nextExecutionDate2 = nextTime;
-            stmt.setTimestamp(4, Timestamp.valueOf(nextExecutionDate2));
+            stmt.setTimestamp(7, Timestamp.valueOf(nextExecutionDate2));
+            stmt.setString(8, transactionDTO.getCategory());
+            stmt.setInt(9, transactionDTO.getAccountId());
             stmt.executeUpdate();
         }
     }
@@ -298,14 +297,18 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private void insertUpdatedRecurringTransaction(Connection conn, TransactionDTO transactionDTO) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(saveRecurringTransactionQry)) {
             stmt.setDouble(1, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setString(2, transactionDTO.getType());
-            stmt.setInt(3, transactionDTO.getTransactionId());
-            LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime(), transactionDTO.getTimeInterval());
+            stmt.setDouble(2, Double.parseDouble(transactionDTO.getBalance_after()));
+            stmt.setDouble(3, (Double.parseDouble(transactionDTO.getBalance_after()) 
+                + Double.parseDouble(transactionDTO.getAmount())));
+            stmt.setString(4, transactionDTO.getType());
+            stmt.setInt(5, transactionDTO.getTransactionId());
+            LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime()
+                , transactionDTO.getTimeInterval());
             LocalDateTime localDateTime = LocalDateTime.now();
-            stmt.setTimestamp(4, Timestamp.valueOf(nextTime));
-            stmt.setTimestamp(5, Timestamp.valueOf(localDateTime));
-            stmt.setString(6, transactionDTO.getCategory());
-            stmt.setInt(7, transactionDTO.getAccountId());
+            stmt.setTimestamp(6, Timestamp.valueOf(nextTime));
+            stmt.setTimestamp(7, Timestamp.valueOf(localDateTime));
+            stmt.setString(8, transactionDTO.getCategory());
+            stmt.setInt(9, transactionDTO.getAccountId());
             stmt.executeUpdate();
         }
     }
@@ -313,22 +316,22 @@ public class RecurrentTransactionDAO implements IRecurrentTransactionDAO {
     private void insertNewRecurringTransaction(Connection conn, TransactionDTO transactionDTO) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(saveRecurringTransactionQry)) {
             stmt.setDouble(1, Double.parseDouble(transactionDTO.getAmount()));
-            stmt.setString(2, transactionDTO.getType());
-            stmt.setInt(3, transactionDTO.getTransactionId());
-            LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime(), transactionDTO.getTimeInterval());
-            OffsetDateTime offsetDateTime = OffsetDateTime.parse(transactionDTO.getTimestamp(), 
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssX"));
-            LocalDateTime localDateTime = offsetDateTime.toLocalDateTime();
-            stmt.setTimestamp(4, Timestamp.valueOf(nextTime));
-            stmt.setTimestamp(5, Timestamp.valueOf(localDateTime));
-            stmt.setString(6, transactionDTO.getCategory());
-            stmt.setInt(7, transactionDTO.getAccountId());
+            stmt.setDouble(2, Double.parseDouble(transactionDTO.getBalance_before()));
+            stmt.setDouble(3, Double.parseDouble(transactionDTO.getBalance_after()));
+            stmt.setString(4, transactionDTO.getType());
+            stmt.setInt(5, transactionDTO.getTransactionId());
+            LocalDateTime nextTime = calculateNextExecutionDateInDb(transactionDTO.getLocaldatetime()
+                , transactionDTO.getTimeInterval());
+            LocalDateTime localDateTime = transactionDTO.getLocaldatetime();
+            stmt.setTimestamp(6, Timestamp.valueOf(nextTime));
+            stmt.setTimestamp(7, Timestamp.valueOf(localDateTime));
+            stmt.setString(8, transactionDTO.getCategory());
+            stmt.setInt(9, transactionDTO.getAccountId());
             stmt.executeUpdate();
         }
     }
 
     private LocalDateTime calculateNextExecutionDateInDb(LocalDateTime timestamp, String timeInterval){
-        System.out.println("Timestamp in calc exec in db: " + timestamp);
         LocalDateTime originalDateTime = timestamp;
         ChronoUnit chronoUnit = mapTimeIntervalToChronoUnit(timeInterval);
         return originalDateTime.plus(1, chronoUnit);
