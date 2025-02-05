@@ -32,8 +32,8 @@ public class SendEmail {
                 Message.RecipientType.TO,
                 InternetAddress.parse(receivingEmail)
             );
-            message.setSubject("Test Email from Java");
-            message.setText("Hello, this is a test email sent from a Java program!");
+            message.setSubject("Balance is low");
+            message.setText("Your balance is below 5,00 please check your account!!!");
 
             // Send the email
             Transport.send(message);
