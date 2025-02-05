@@ -56,7 +56,7 @@ public class NightlyJob implements Job {
                 User user = userDAO.getUserWithId(accountDTO.getUserId());
                 getTransactionInformation(trns);
                 currentBalance = calculateBalance(type, currentBalance, transactionAmount);
-                //checkIfEmailNeedsToBeSend(currentBalance, type, user);
+                checkIfEmailNeedsToBeSend(currentBalance, type, user);
                 trns = updateTransactionDTO(trns, rTrns);
                 updateDatabase(trns, rTrns, currentBalance);
             }
@@ -79,8 +79,9 @@ public class NightlyJob implements Job {
         try (Connection conn = DatabaseConnection.getConnection()) {
             try {
                 conn.setAutoCommit(false);
-                accountDAO.updateBalance(conn, trns.getAccountId(), currentBalance);
+                accountDAO.setAccountBalance(conn, trns.getAccountId(), currentBalance);
                 recurrentTransactionDAO.updateRecTransIsComplete(conn, rTrns.getId()); 
+                System.out.println("Trying to save recurring transaction");
                 recurrentTransactionDAO.saveRecTrans(conn, trns);
                 conn.commit();
                 conn.setAutoCommit(true);

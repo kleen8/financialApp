@@ -260,6 +260,18 @@ public class AccountDAO implements IAccountDAO{
     }
 
     @Override
+    public void setAccountBalance(Connection connection, int accountId, double delta) {
+        try (PreparedStatement stmt = connection.prepareStatement(setAccountBalanceQry)){
+            stmt.setDouble(1, delta);
+            stmt.setInt(2, accountId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            LOGGER.error("SQLException occured at {}: {}" , java.time.LocalDateTime.now(), e.getMessage());
+            throw new RuntimeException("Error updating account balance" + e.getMessage());
+        }
+    }
+
+    @Override
     public void updateBalance(Connection connection, int accountId, double delta) {
         try (PreparedStatement stmt = connection.prepareStatement(updateAccountBalanceQry)){
             stmt.setDouble(1, delta);

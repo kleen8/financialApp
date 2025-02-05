@@ -15,4 +15,5 @@ public interface IAccountDAO {
     Double getAccountBalance(int accountId);
     AccountDTO getAccountDTOWithId(int accountId);
     void updateBalance(Connection connection, int accountId, double delta); 
+    void setAccountBalance(Connection connection, int accountId, double delta); 
 }
